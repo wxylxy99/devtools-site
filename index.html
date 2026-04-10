@@ -7,7 +7,7 @@
 <meta name="description" content="Free online developer tools: JSON formatter, Base64 encoder, timestamp converter, color converter, regex tester, URL encoder. All tools run locally in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -44,12 +44,13 @@
   --text-dim: #8888a0;
   --accent: #00e5ff;
   --accent-purple: #a855f7;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   --font-code: 'JetBrains Mono', monospace;
   --font-title: 'Syne', sans-serif;
 }
 
 body {
-  font-family: var(--font-code);
+  font-family: var(--font-body);
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -240,7 +241,7 @@ a:hover { text-decoration: underline; }
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
-  font-family: var(--font-code);
+  font-family: var(--font-body);
   font-size: 0.8rem;
   transition: border-color 0.2s, color 0.2s;
 }
@@ -290,7 +291,7 @@ label {
   padding: 8px 18px;
   border-radius: 6px;
   cursor: pointer;
-  font-family: var(--font-code);
+  font-family: var(--font-body);
   font-size: 0.8rem;
   transition: all 0.2s;
 }
