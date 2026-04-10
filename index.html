@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevToolBox - Free Online Developer Tools</title>
+<meta name="description" content="Free online developer tools: JSON formatter, Base64 encoder, timestamp converter, color converter, regex tester, URL encoder. All tools run locally in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+
+<!-- Baidu Analytics -->
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-input: #1a1a25;
+  --border: #2a2a3a;
+  --text: #e0e0e8;
+  --text-dim: #8888a0;
+  --accent: #00e5ff;
+  --accent-purple: #a855f7;
+  --font-code: 'JetBrains Mono', monospace;
+  --font-title: 'Syne', sans-serif;
+}
+
+body {
+  font-family: var(--font-code);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  cursor: pointer;
+}
+.logo span { color: var(--text); }
+.nav { display: flex; gap: 24px; }
+.nav a {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.nav a:hover { color: var(--accent); text-decoration: none; }
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.main { min-width: 0; }
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 48px 0 32px;
+}
+.hero h1 {
+  font-family: var(--font-title);
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero p {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Ad Slots */
+.ad-slot {
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  overflow: hidden;
+}
+.ad-slot-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.ad-banner { margin: 24px 0; }
+
+/* Progress Bar Ad */
+.ad-progress-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.ad-progress-bar-track {
+  width: 100%;
+  height: 3px;
+  background: var(--bg-input);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.ad-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+.ad-progress-text {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Tool Cards */
+.tool-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.tool-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,229,255,0.1);
+}
+.tool-card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+}
+.tool-card h3 {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.tool-card p {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* Tool Workspace */
+.workspace {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+.workspace.active { display: block; }
+.workspace-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.workspace-header h2 {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  flex: 1;
+}
+.btn-back {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Common Controls */
+.tool-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+textarea, input[type="text"] {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  padding: 12px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+textarea:focus, input[type="text"]:focus {
+  border-color: var(--accent);
+}
+textarea { min-height: 200px; }
+label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.btn-group {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+.btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+.btn-primary:hover { background: #00c8e0; color: var(--bg); }
+.status-bar {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.status-ok { color: #34d399; }
+.status-err { color: #f87171; }
+
+/* Color preview */
+.color-preview {
+  width: 100%;
+  height: 80px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  transition: background-color 0.2s;
+}
+.color-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* Timestamp results */
+.ts-results {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ts-result-item {
+  background: var(--bg-input);
+  padding: 12px;
+  border-radius: 8px;
+}
+.ts-result-item .label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.ts-result-item .value {
+  font-size: 0.85rem;
+  color: var(--text);
+  word-break: break-all;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 24px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 48px;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+.footer-links a { color: var(--text-dim); }
+.footer-links a:hover { color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar { order: 2; }
+  .tool-row { grid-template-columns: 1fr; }
+  .color-inputs { grid-template-columns: 1fr; }
+  .ts-results { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo" onclick="showHome()">Dev<span>ToolBox</span></div>
+  <nav class="nav">
+    <a href="#" onclick="showHome(); return false;">Tools</a>
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy</a>
+  </nav>
+</header>
+
+<!-- Layout -->
+<div class="layout">
+  <div class="main">
+
+    <!-- Hero -->
+    <div class="hero" id="hero">
+      <h1>Free <span class="accent">Developer</span> Tools</h1>
+      <p>Fast, private, browser-based utilities for developers. No data leaves your machine.</p>
+    </div>
+
+    <!-- Banner Ad -->
+    <div class="ad-slot ad-banner" id="adBanner">
+      <div class="ad-slot-label">Advertisement</div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="1111111111"
+           data-ad-format="horizontal"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Tool Cards -->
+    <div class="tool-cards" id="toolCards">
+      <div class="tool-card" onclick="openTool('json')">
+        <div class="tool-card-icon">{}</div>
+        <h3>JSON Formatter</h3>
+        <p>Format, validate, and minify JSON data with syntax highlighting.</p>
+      </div>
+      <div class="tool-card" onclick="openTool('base64')">
+        <div class="tool-card-icon">B64</div>
+        <h3>Base64 Encoder / Decoder</h3>
+        <p>Encode and decode Base64 strings with full Unicode support.</p>
+      </div>
+      <div class="tool-card" onclick="openTool('timestamp')">
+        <div class="tool-card-icon">&#128339;</div>
+        <h3>Timestamp Converter</h3>
+        <p>Convert between Unix timestamps and human-readable dates.</p>
+      </div>
+      <div class="tool-card" onclick="openTool('color')">
+        <div class="tool-card-icon">&#127912;</div>
+        <h3>Color Converter</h3>
+        <p>Convert colors between HEX, RGB, and HSL formats instantly.</p>
+      </div>
+      <div class="tool-card" onclick="openTool('regex')">
+        <div class="tool-card-icon">.*</div>
+        <h3>Regex Tester</h3>
+        <p>Test regular expressions with real-time matching and validation.</p>
+      </div>
+      <div class="tool-card" onclick="openTool('url')">
+        <div class="tool-card-icon">%20</div>
+        <h3>URL Encoder / Decoder</h3>
+        <p>Encode and decode URLs for safe transmission.</p>
+      </div>
+    </div>
+
+    <!-- Workspaces -->
+
+    <!-- JSON Formatter -->
+    <div class="workspace" id="tool-json">
+      <div class="workspace-header">
+        <h2>{} JSON Formatter</h2>
+        <button class="btn-back" onclick="showHome()">&#8592; Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Input</label>
+          <textarea id="jsonInput" placeholder='Paste JSON here...'></textarea>
+        </div>
+        <div>
+          <label>Output</label>
+          <textarea id="jsonOutput" readonly placeholder="Formatted output..."></textarea>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="jsonFormat()">Format</button>
+        <button class="btn" onclick="jsonMinify()">Minify</button>
+        <button class="btn" onclick="jsonClear()">Clear</button>
+      </div>
+      <div class="status-bar" id="jsonStatus">
+        <span>Ready</span>
+      </div>
+    </div>
+
+    <!-- Base64 -->
+    <div class="workspace" id="tool-base64">
+      <div class="workspace-header">
+        <h2>B64 Base64 Encoder / Decoder</h2>
+        <button class="btn-back" onclick="showHome()">&#8592; Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Input</label>
+          <textarea id="b64Input" placeholder="Enter text or Base64 string..."></textarea>
+        </div>
+        <div>
+          <label>Output</label>
+          <textarea id="b64Output" readonly placeholder="Result..."></textarea>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="b64Encode()">Encode</button>
+        <button class="btn" onclick="b64Decode()">Decode</button>
+        <button class="btn" onclick="b64Clear()">Clear</button>
+      </div>
+      <div class="status-bar" id="b64Status">
+        <span>Ready</span>
+      </div>
+    </div>
+
+    <!-- Timestamp Converter -->
+    <div class="workspace" id="tool-timestamp">
+      <div class="workspace-header">
+        <h2>&#128339; Timestamp Converter</h2>
+        <button class="btn-back" onclick="showHome()">&#8592; Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Unix Timestamp (seconds or milliseconds)</label>
+          <input type="text" id="tsUnix" placeholder="e.g. 1700000000" oninput="tsFromUnix()">
+        </div>
+        <div>
+          <label>ISO Date String</label>
+          <input type="text" id="tsISO" placeholder="e.g. 2024-01-01T00:00:00Z" oninput="tsFromISO()">
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="tsNow()">Use Now</button>
+      </div>
+      <div class="ts-results" id="tsResults">
+        <div class="ts-result-item">
+          <div class="label">UTC Time</div>
+          <div class="value" id="tsUTC">-</div>
+        </div>
+        <div class="ts-result-item">
+          <div class="label">Local Time</div>
+          <div class="value" id="tsLocal">-</div>
+        </div>
+        <div class="ts-result-item">
+          <div class="label">Unix (seconds)</div>
+          <div class="value" id="tsSec">-</div>
+        </div>
+        <div class="ts-result-item">
+          <div class="label">Relative</div>
+          <div class="value" id="tsRelative">-</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Converter -->
+    <div class="workspace" id="tool-color">
+      <div class="workspace-header">
+        <h2>&#127912; Color Converter</h2>
+        <button class="btn-back" onclick="showHome()">&#8592; Back</button>
+      </div>
+      <div class="color-preview" id="colorPreview" style="background-color: #00e5ff;"></div>
+      <div class="color-inputs">
+        <div>
+          <label>HEX</label>
+          <input type="text" id="colorHex" value="#00e5ff" oninput="colorFromHex()">
+        </div>
+        <div>
+          <label>RGB</label>
+          <input type="text" id="colorRGB" value="rgb(0, 229, 255)" oninput="colorFromRGB()">
+        </div>
+        <div>
+          <label>HSL</label>
+          <input type="text" id="colorHSL" value="hsl(186, 100%, 50%)" oninput="colorFromHSL()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Regex Tester -->
+    <div class="workspace" id="tool-regex">
+      <div class="workspace-header">
+        <h2>.* Regex Tester</h2>
+        <button class="btn-back" onclick="showHome()">&#8592; Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Pattern</label>
+          <input type="text" id="regexPattern" placeholder="e.g. \d+" oninput="regexTest()">
+        </div>
+        <div>
+          <label>Flags</label>
+          <input type="text" id="regexFlags" value="g" placeholder="e.g. gi" oninput="regexTest()">
+        </div>
+      </div>
+      <div style="margin-top: 12px;">
+        <label>Test String</label>
+        <textarea id="regexTestStr" placeholder="Enter test string..." oninput="regexTest()"></textarea>
+      </div>
+      <div class="status-bar" id="regexStatus">
+        <span>Ready</span>
+      </div>
+    </div>
+
+    <!-- URL Encoder/Decoder -->
+    <div class="workspace" id="tool-url">
+      <div class="workspace-header">
+        <h2>%20 URL Encoder / Decoder</h2>
+        <button class="btn-back" onclick="showHome()">&#8592; Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Input</label>
+          <textarea id="urlInput" placeholder="Enter URL or text..."></textarea>
+        </div>
+        <div>
+          <label>Output</label>
+          <textarea id="urlOutput" readonly placeholder="Result..."></textarea>
+          <button class="btn" style="margin-top: 8px;" onclick="urlCopy()">Copy</button>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="urlEncode()">Encode</button>
+        <button class="btn" onclick="urlDecode()">Decode</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <!-- Progress Bar Ad -->
+    <div class="ad-progress-wrap">
+      <div class="ad-progress-bar-track">
+        <div class="ad-progress-bar-fill" id="adProgressFill"></div>
+      </div>
+      <div class="ad-progress-text" id="adProgressText">Ad refreshes in 60s</div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="4444444444"
+           data-ad-format="rectangle"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Sidebar Ad 1 -->
+    <div class="ad-slot">
+      <div class="ad-slot-label">Advertisement</div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="2222222222"
+           data-ad-format="rectangle"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Sidebar Ad 2 -->
+    <div class="ad-slot">
+      <div class="ad-slot-label">Advertisement</div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="3333333333"
+           data-ad-format="rectangle"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </aside>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div>&copy; 2024 DevToolBox. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+</footer>
+
+<script>
+// ========== Navigation ==========
+function showHome() {
+  document.getElementById('hero').style.display = '';
+  document.getElementById('toolCards').style.display = '';
+  document.getElementById('adBanner').style.display = '';
+  document.querySelectorAll('.workspace').forEach(function(ws) {
+    ws.classList.remove('active');
+  });
+}
+
+function openTool(name) {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('toolCards').style.display = 'none';
+  document.getElementById('adBanner').style.display = 'none';
+  document.querySelectorAll('.workspace').forEach(function(ws) {
+    ws.classList.remove('active');
+  });
+  document.getElementById('tool-' + name).classList.add('active');
+}
+
+// ========== JSON Formatter ==========
+function jsonFormat() {
+  var input = document.getElementById('jsonInput').value;
+  var status = document.getElementById('jsonStatus');
+  if (!input.trim()) { status.innerHTML = '<span>No input</span>'; return; }
+  try {
+    var obj = JSON.parse(input);
+    var output = JSON.stringify(obj, null, 2);
+    document.getElementById('jsonOutput').value = output;
+    status.innerHTML = '<span class="status-ok">Valid JSON &#10003;</span><span>' + input.length + ' chars &rarr; ' + output.length + ' chars</span>';
+  } catch (e) {
+    status.innerHTML = '<span class="status-err">Error: ' + e.message + '</span>';
+  }
+}
+
+function jsonMinify() {
+  var input = document.getElementById('jsonInput').value;
+  var status = document.getElementById('jsonStatus');
+  if (!input.trim()) { status.innerHTML = '<span>No input</span>'; return; }
+  try {
+    var obj = JSON.parse(input);
+    var output = JSON.stringify(obj);
+    document.getElementById('jsonOutput').value = output;
+    status.innerHTML = '<span class="status-ok">Minified &#10003;</span><span>' + input.length + ' chars &rarr; ' + output.length + ' chars</span>';
+  } catch (e) {
+    status.innerHTML = '<span class="status-err">Error: ' + e.message + '</span>';
+  }
+}
+
+function jsonClear() {
+  document.getElementById('jsonInput').value = '';
+  document.getElementById('jsonOutput').value = '';
+  document.getElementById('jsonStatus').innerHTML = '<span>Ready</span>';
+}
+
+// ========== Base64 ==========
+function b64Encode() {
+  var input = document.getElementById('b64Input').value;
+  var status = document.getElementById('b64Status');
+  if (!input) { status.innerHTML = '<span>No input</span>'; return; }
+  try {
+    var encoded = btoa(unescape(encodeURIComponent(input)));
+    document.getElementById('b64Output').value = encoded;
+    status.innerHTML = '<span class="status-ok">Encoded &#10003;</span><span>' + input.length + ' chars &rarr; ' + encoded.length + ' chars</span>';
+  } catch (e) {
+    status.innerHTML = '<span class="status-err">Encode error: ' + e.message + '</span>';
+  }
+}
+
+function b64Decode() {
+  var input = document.getElementById('b64Input').value;
+  var status = document.getElementById('b64Status');
+  if (!input) { status.innerHTML = '<span>No input</span>'; return; }
+  try {
+    var decoded = decodeURIComponent(escape(atob(input)));
+    document.getElementById('b64Output').value = decoded;
+    status.innerHTML = '<span class="status-ok">Decoded &#10003;</span><span>' + input.length + ' chars &rarr; ' + decoded.length + ' chars</span>';
+  } catch (e) {
+    status.innerHTML = '<span class="status-err">Decode error: ' + e.message + '</span>';
+  }
+}
+
+function b64Clear() {
+  document.getElementById('b64Input').value = '';
+  document.getElementById('b64Output').value = '';
+  document.getElementById('b64Status').innerHTML = '<span>Ready</span>';
+}
+
+// ========== Timestamp Converter ==========
+function tsUpdate(date) {
+  if (isNaN(date.getTime())) {
+    document.getElementById('tsUTC').textContent = 'Invalid date';
+    document.getElementById('tsLocal').textContent = '-';
+    document.getElementById('tsSec').textContent = '-';
+    document.getElementById('tsRelative').textContent = '-';
+    return;
+  }
+  document.getElementById('tsUTC').textContent = date.toUTCString();
+  document.getElementById('tsLocal').textContent = date.toLocaleString();
+  document.getElementById('tsSec').textContent = Math.floor(date.getTime() / 1000);
+
+  var diff = Date.now() - date.getTime();
+  var absDiff = Math.abs(diff);
+  var rel;
+  if (absDiff < 60000) rel = Math.floor(absDiff / 1000) + ' seconds';
+  else if (absDiff < 3600000) rel = Math.floor(absDiff / 60000) + ' minutes';
+  else if (absDiff < 86400000) rel = Math.floor(absDiff / 3600000) + ' hours';
+  else rel = Math.floor(absDiff / 86400000) + ' days';
+  rel += diff > 0 ? ' ago' : ' from now';
+  document.getElementById('tsRelative').textContent = rel;
+}
+
+function tsFromUnix() {
+  var val = document.getElementById('tsUnix').value.trim();
+  if (!val) return;
+  var num = Number(val);
+  if (isNaN(num)) return;
+  // auto-detect seconds vs milliseconds
+  var ms = num > 1e12 ? num : num * 1000;
+  var date = new Date(ms);
+  document.getElementById('tsISO').value = date.toISOString();
+  tsUpdate(date);
+}
+
+function tsFromISO() {
+  var val = document.getElementById('tsISO').value.trim();
+  if (!val) return;
+  var date = new Date(val);
+  if (!isNaN(date.getTime())) {
+    document.getElementById('tsUnix').value = Math.floor(date.getTime() / 1000);
+  }
+  tsUpdate(date);
+}
+
+function tsNow() {
+  var now = new Date();
+  document.getElementById('tsUnix').value = Math.floor(now.getTime() / 1000);
+  document.getElementById('tsISO').value = now.toISOString();
+  tsUpdate(now);
+}
+
+// ========== Color Converter ==========
+function hexToRgb(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  if (hex.length !== 6) return null;
+  var n = parseInt(hex, 16);
+  if (isNaN(n)) return null;
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h, s, l = (max + min) / 2;
+  if (max === min) { h = s = 0; }
+  else {
+    var d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+}
+
+function hslToRgb(h, s, l) {
+  h /= 360; s /= 100; l /= 100;
+  var r, g, b;
+  if (s === 0) { r = g = b = l; }
+  else {
+    function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    }
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+}
+
+function updateColorUI(r, g, b) {
+  var hex = '#' + [r, g, b].map(function(c) { return c.toString(16).padStart(2, '0'); }).join('');
+  var hsl = rgbToHsl(r, g, b);
+  document.getElementById('colorPreview').style.backgroundColor = hex;
+  document.getElementById('colorHex').value = hex;
+  document.getElementById('colorRGB').value = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  document.getElementById('colorHSL').value = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+}
+
+function colorFromHex() {
+  var rgb = hexToRgb(document.getElementById('colorHex').value.trim());
+  if (rgb) {
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    document.getElementById('colorPreview').style.backgroundColor = document.getElementById('colorHex').value.trim();
+    document.getElementById('colorRGB').value = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+    document.getElementById('colorHSL').value = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+  }
+}
+
+function colorFromRGB() {
+  var m = document.getElementById('colorRGB').value.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+  if (m) {
+    var r = Math.min(255, parseInt(m[1]));
+    var g = Math.min(255, parseInt(m[2]));
+    var b = Math.min(255, parseInt(m[3]));
+    var hex = '#' + [r, g, b].map(function(c) { return c.toString(16).padStart(2, '0'); }).join('');
+    var hsl = rgbToHsl(r, g, b);
+    document.getElementById('colorPreview').style.backgroundColor = hex;
+    document.getElementById('colorHex').value = hex;
+    document.getElementById('colorHSL').value = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+  }
+}
+
+function colorFromHSL() {
+  var m = document.getElementById('colorHSL').value.match(/(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?/);
+  if (m) {
+    var rgb = hslToRgb(parseInt(m[1]), parseInt(m[2]), parseInt(m[3]));
+    var hex = '#' + [rgb.r, rgb.g, rgb.b].map(function(c) { return c.toString(16).padStart(2, '0'); }).join('');
+    document.getElementById('colorPreview').style.backgroundColor = hex;
+    document.getElementById('colorHex').value = hex;
+    document.getElementById('colorRGB').value = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+  }
+}
+
+// ========== Regex Tester ==========
+function regexTest() {
+  var pattern = document.getElementById('regexPattern').value;
+  var flags = document.getElementById('regexFlags').value;
+  var testStr = document.getElementById('regexTestStr').value;
+  var status = document.getElementById('regexStatus');
+
+  if (!pattern) { status.innerHTML = '<span>Enter a pattern</span>'; return; }
+
+  try {
+    var regex = new RegExp(pattern, flags);
+    var matches = testStr.match(regex);
+    var count = matches ? matches.length : 0;
+    status.innerHTML = '<span class="status-ok">Valid pattern &#10003;</span><span>' + count + ' match' + (count !== 1 ? 'es' : '') + ' found</span>';
+  } catch (e) {
+    status.innerHTML = '<span class="status-err">Error: ' + e.message + '</span>';
+  }
+}
+
+// ========== URL Encoder/Decoder ==========
+function urlEncode() {
+  var input = document.getElementById('urlInput').value;
+  document.getElementById('urlOutput').value = encodeURIComponent(input);
+}
+
+function urlDecode() {
+  var input = document.getElementById('urlInput').value;
+  try {
+    document.getElementById('urlOutput').value = decodeURIComponent(input);
+  } catch (e) {
+    document.getElementById('urlOutput').value = 'Error: ' + e.message;
+  }
+}
+
+function urlCopy() {
+  var output = document.getElementById('urlOutput');
+  navigator.clipboard.writeText(output.value).then(function() {
+    var btn = output.nextElementSibling;
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+  });
+}
+
+// ========== 60s Ad Progress Bar ==========
+(function() {
+  var fill = document.getElementById('adProgressFill');
+  var text = document.getElementById('adProgressText');
+  var duration = 60;
+  var elapsed = 0;
+
+  function tick() {
+    elapsed++;
+    if (elapsed > duration) {
+      text.textContent = 'Refreshing...';
+      fill.style.width = '100%';
+      setTimeout(function() {
+        elapsed = 0;
+        fill.style.transition = 'none';
+        fill.style.width = '0%';
+        setTimeout(function() {
+          fill.style.transition = 'width 1s linear';
+          tick();
+        }, 50);
+      }, 2000);
+      return;
+    }
+    var pct = (elapsed / duration) * 100;
+    fill.style.width = pct + '%';
+    text.textContent = 'Ad refreshes in ' + (duration - elapsed) + 's';
+    setTimeout(tick, 1000);
+  }
+
+  tick();
+})();
+</script>
+</body>
+</html>
