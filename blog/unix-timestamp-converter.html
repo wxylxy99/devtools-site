@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Convert Unix Timestamps to Human-Readable Dates</title>
+    <meta name="description" content="Free online unix timestamp converter tool. Convert unix timestamp to date and vice versa instantly. Works in browser, no signup required.">
+    <meta name="keywords" content="unix timestamp converter, unix time converter, timestamp to date, epoch converter">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta property="og:title" content="Unix Timestamp Converter - Free Online Tool">
+    <meta property="og:description" content="Convert unix timestamps to human-readable dates instantly. Free browser-based tool with no signup required.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --accent: #00d4ff;
+            --accent-hover: #00b8e6;
+            --border: #2a2a4a;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .breadcrumb a:hover {
+            color: var(--accent-hover);
+        }
+        .breadcrumb span {
+            margin: 0 8px;
+            color: var(--text-secondary);
+        }
+        .site-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .site-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .converter-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 35px;
+            margin: 30px auto;
+            border: 1px solid var(--border);
+            max-width: 700px;
+        }
+        .converter-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+        }
+        .input-group input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+        .button-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .result-box .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .result-box .value {
+            font-size: 1.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            word-break: break-all;
+        }
+        .result-box .value.error {
+            color: #ff6b6b;
+        }
+        .adsense-slot {
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 30px auto;
+            max-width: 728px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .content-wrapper {
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+        }
+        .article-content h2 {
+            font-size: 1.6rem;
+            margin: 35px 0 15px;
+            color: var(--text-primary);
+            padding-top: 10px;
+        }
+        .article-content h3 {
+            font-size: 1.25rem;
+            margin: 25px 0 12px;
+            color: var(--text-primary);
+        }
+        .article-content p {
+            margin-bottom: 18px;
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+        }
+        .article-content ul, .article-content ol {
+            margin: 18px 0 18px 25px;
+            color: var(--text-secondary);
+        }
+        .article-content li {
+            margin-bottom: 10px;
+        }
+        .article-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .article-content code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-card);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+        .article-content pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .article-content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        .info-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent);
+            padding: 18px 22px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        .info-box p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 25px 0;
+        }
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .article-content th, .article-content td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .article-content th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .article-content td {
+            color: var(--text-secondary);
+        }
+        .article-content tr:last-child td {
+            border-bottom: none;
+        }
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .converter-section {
+                padding: 25px 20px;
+            }
+            .btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a><span>/</span><a href="/tools/">Tools</a><span>/</span><span>Unix Timestamp Converter</span>
+            </div>
+            <div class="site-title"><a href="/">DevUtils</a></div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Unix Timestamp Converter</h1>
+            <p>Convert unix timestamps to human-readable dates and vice versa. Free, fast, and works entirely in your browser.</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="adsense-slot">
+            <!-- AdSense Placeholder: 728x90 Leaderboard -->
+            <span>Advertisement</span>
+        </div>
+
+        <div class="converter-section">
+            <h2>Timestamp Converter Tool</h2>
+            <div class="input-group">
+                <label for="timestamp">Unix Timestamp</label>
+                <input type="text" id="timestamp" placeholder="e.g. 1712832000 or now">
+            </div>
+            <div class="input-group">
+                <label for="datetime">Date & Time</label>
+                <input type="datetime-local" id="datetime">
+            </div>
+            <div class="button-row">
+                <button class="btn btn-primary" onclick="convertToDate()">Convert to Date</button>
+                <button class="btn btn-secondary" onclick="convertToTimestamp()">Convert to Timestamp</button>
+                <button class="btn btn-secondary" onclick="setCurrentTime()">Now</button>
+            </div>
+            <div class="result-box">
+                <div class="label">Result</div>
+                <div class="value" id="result">Enter a value above to convert</div>
+            </div>
+        </div>
+    </div>
+
+    <article class="content-wrapper article-content">
+        <h2>What is a Unix Timestamp?</h2>
+
+        <p>A <strong>unix timestamp converter</strong> is a tool that transforms between unix timestamps and human-readable dates. But to understand why this matters, let's first explore what a unix timestamp actually is.</p>
+
+        <p>A unix timestamp (also called epoch time or POSIX time) represents the number of seconds that have elapsed since <strong>January 1, 1970, 00:00:00 UTC</strong>. This moment is known as the "Unix Epoch." Each day contains 86,400 seconds, so the timestamp increases by that amount each day.</p>
+
+        <p>For example, the timestamp <code>1712832000</code> corresponds to April 11, 2024, at midnight UTC. The timestamp <code>1712918400</code> represents the same time on the next day. This simple numeric system makes it remarkably easy for computers to perform date and time calculations—you can add or subtract seconds directly without dealing with complex calendar rules.</p>
+
+        <div class="info-box">
+            <p><strong>Quick fact:</strong> On May 13, 2038, 32-bit systems will experience the "Year 2038 problem" because their unix timestamps will overflow. This is why many systems have migrated to 64-bit integers, which can represent dates far into the future.</p>
+        </div>
+
+        <h2>Why Are Unix Timestamps Used Everywhere?</h2>
+
+        <p>Unix timestamps are the universal language of time in computing. Here's why developers and systems love them:</p>
+
+        <ul>
+            <li><strong>Simplicity:</strong> A single integer can represent any point in time. No need to store year, month, day, hour, minute, and second separately.</li>
+            <li><strong>Easy calculation:</strong> Subtracting two timestamps gives you the difference in seconds instantly. No complex date library required.</li>
+            <li><strong>Timezone agnostic:</strong> The timestamp is always relative to UTC. Converting to local time is a display concern, not a storage concern.</li>
+            <li><strong>Database friendly:</strong> Integers are highly efficient for indexing and querying. Most databases sort and compare integers faster than date strings.</li>
+            <li><strong>Language agnostic:</strong> Every programming language—from Python to JavaScript to Go—can parse and generate unix timestamps.</li>
+        </ul>
+
+        <h2>How to Convert Unix Timestamp to Date</h2>
+
+        <p>Converting a unix timestamp to a human-readable date is straightforward. Most programming languages provide built-in functions for this:</p>
+
+        <pre><code>// JavaScript
+const timestamp = 1712832000;
+const date = new Date(timestamp * 1000); // multiply by 1000 for milliseconds
+console.log(date.toUTCString()); // "Thu, 11 Apr 2024 00:00:00 GMT"
+
+// Python
+import datetime
+timestamp = 1712832000
+date = datetime.datetime.fromtimestamp(timestamp)
+print(date) # 2024-04-11 00:00:00
+
+// PHP
+$timestamp = 1712832000;
+echo date('Y-m-d H:i:s', $timestamp); // 2024-04-11 00:00:00</code></pre>
+
+        <div class="adsense-slot">
+            <!-- AdSense Placeholder: 300x250 Medium Rectangle -->
+            <span>Advertisement</span>
+        </div>
+
+        <h2>Converting Date to Unix Timestamp</h2>
+
+        <p>The reverse conversion—turning a date into a timestamp—is equally important. This is what our unix timestamp converter does when you enter a date in the input field above.</p>
+
+        <pre><code>// JavaScript
+const date = new Date('2024-04-11T00:00:00Z');
+const timestamp = Math.floor(date.getTime() / 1000);
+console.log(timestamp); // 1712832000
+
+// Python
+from datetime import datetime
+date = datetime(2024, 4, 11, 0, 0, 0)
+timestamp = int(date.timestamp())
+print(timestamp) # 1712832000
+
+// Go
+package main
+import (
+    "fmt"
+    "time"
+)
+func main() {
+    date := time.Date(2024, 4, 11, 0, 0, 0, 0, time.UTC)
+    fmt.Println(date.Unix()) // 1712832000
+}</code></pre>
+
+        <h2>Common Unix Timestamp Values</h2>
+
+        <p>Here are some frequently encountered timestamps that our unix timestamp converter can help you decode:</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Date (UTC)</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0</code></td>
+                        <td>Jan 1, 1970 00:00:00</td>
+                        <td>The Unix Epoch (starting point)</td>
+                    </tr>
+                    <tr>
+                        <td><code>1000000000</code></td>
+                        <td>Sep 9, 2001 01:46:40</td>
+                        <td>Unix billion second celebration</td>
+                    </tr>
+                    <tr>
+                        <td><code>1609459200</code></td>
+                        <td>Jan 1, 2021 00:00:00</td>
+                        <td>New Year's Eve 2021 (UTC)</td>
+                    </tr>
+                    <tr>
+                        <td><code>1672531200</code></td>
+                        <td>Jan 1, 2023 00:00:00</td>
+                        <td>New Year's Day 2023 (UTC)</td>
+                    </tr>
+                    <tr>
+                        <td><code>1704067200</code></td>
+                        <td>Jan 1, 2024 00:00:00</td>
+                        <td>New Year's Day 2024 (UTC)</td>
+                    </tr>
+                    <tr>
+                        <td><code>1735689600</code></td>
+                        <td>Jan 1, 2025 00:00:00</td>
+                        <td>New Year's Day 2025 (UTC)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Milliseconds vs. Seconds: A Common Pitfall</h2>
+
+        <p>One of the most frequent errors when working with timestamps is confusing <strong>seconds with milliseconds</strong>. Unix timestamps are traditionally defined in seconds, but many APIs and JavaScript's <code>Date.now()</code> return milliseconds.</p>
+
+        <p>For example, the timestamp <code>1712832000000</code> (with three extra zeros) represents April 11, 2024 in milliseconds, not seconds. If you're getting dates that are off by a factor of 1000, check whether you need to divide or multiply by 1000 before converting.</p>
+
+        <div class="info-box">
+            <p><strong>Tip:</strong> If you see a date in the year 1970 or 1969 when you expect something in the 2020s, you're likely passing milliseconds instead of seconds to your unix timestamp converter.</p>
+        </div>
+
+        <h2>Working with Timestamps in Different Programming Languages</h2>
+
+        <h3>JavaScript / Node.js</h3>
+        <p>JavaScript works with milliseconds, so always remember to divide by 1000 when converting to unix seconds:</p>
+        <pre><code>// Current timestamp in seconds
+const now = Math.floor(Date.now() / 1000);
+
+// Parse a specific date
+const date = new Date('2024-04-11T12:00:00Z');
+const ts = Math.floor(date.getTime() / 1000);</code></pre>
+
+        <h3>Python</h3>
+        <p>Python's <code>datetime</code> module handles both directions elegantly:</p>
+        <pre><code>from datetime import datetime, timezone
+
+# Current timestamp
+timestamp = int(datetime.now(timezone.utc).timestamp())
+
+# Convert timestamp to datetime
+dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)</code></pre>
+
+        <h3>PHP</h3>
+        <p>PHP uses seconds by default with its <code>time()</code> and <code>date()</code> functions:</p>
+        <pre><code>$timestamp = time(); // Current unix timestamp
+$date = date('Y-m-d H:i:s', $timestamp); // Formatted string</code></pre>
+
+        <h2>Timezones and Unix Timestamps</h2>
+
+        <p>A crucial thing to understand: <strong>unix timestamps have no timezone</strong>. The value <code>1712832000</code> always represents the same instant in time, regardless of where you are. When you see "April 11, 2024," that's just your local interpretation of that universal moment.</p>
+
+        <p>This is by design. Storing timestamps in UTC (as unix seconds) and converting to local time only at display time is considered best practice because it:</p>
+        <ul>
+            <li>Prevents timezone-related bugs in your application logic</li>
+            <li>Makes database queries simple and consistent</li>
+            <li>Ensures correct chronological ordering across different user timezones</li>
+            <li>Simplifies debugging since all timestamps are in the same reference frame</li>
+        </ul>
+
+        <h2>Real-World Use Cases for Unix Timestamps</h2>
+
+        <p>Understanding how to use a unix timestamp converter becomes essential in many development scenarios:</p>
+
+        <p><strong>1. API Development:</strong> Most REST APIs accept and return timestamps in unix format. Twitter's API, GitHub's API, and countless others use this standard. Knowing how to convert between formats lets you debug API responses and test endpoints manually.</p>
+
+        <p><strong>2. Database Indexing:</strong> Storing dates as unix timestamps in your database makes range queries trivial. Finding all records created between two dates becomes a simple <code>WHERE created_at >= X AND created_at <= Y</code>.</p>
+
+        <p><strong>3. Cache Invalidation:</strong> ETag headers and cache control often rely on timestamps. When a resource is modified, its timestamp changes, triggering cache refreshes.</p>
+
+        <p><strong>4. Distributed Systems:</strong> In systems with multiple servers across timezones, having a single source of truth in UTC seconds prevents synchronization issues that plague locale-dependent time representations.</p>
+
+        <p><strong>5. Logging and Debugging:</strong> Log files typically include timestamps. Converting these to readable dates helps reconstruct the sequence of events during incident investigation.</p>
+
+        <h2>Frequently Asked Questions</h2>
+
+        <p><strong>What is the current unix timestamp?</strong><br>
+        Use the "Now" button in our converter above, or call <code>Math.floor(Date.now() / 1000)</code> in JavaScript, or <code>time()</code> in PHP.</p>
+
+        <p><strong>How do I convert a unix timestamp to a readable date?</strong><br>
+        Pass the timestamp to a <code>Date</code> constructor (in JavaScript, multiply by 1000 first), then use formatting methods like <code>toLocaleString()</code> or <code>toISOString()</code>.</p>
+
+        <p><strong>Can unix timestamps be negative?</strong><br>
+        Yes. Timestamps before January 1, 1970 have negative values. For example, <code>-86400</code> represents December 31, 1969.</p>
+
+        <p><strong>What's the maximum date a unix timestamp can represent on 64-bit systems?</strong><br>
+        A 64-bit signed integer can represent dates approximately 292 billion years into the future and past—far beyond any practical need.</p>
+
+        <div class="adsense-slot">
+            <!-- AdSense Placeholder: 728x90 Leaderboard -->
+            <span>Advertisement</span>
+        </div>
+
+        <h2>Conclusion</h2>
+
+        <p>A unix timestamp converter is an essential tool for any developer, system administrator, or anyone working with dates in computing. The unix timestamp system, invented in 1971, has proven remarkably durable—decades later, it remains the dominant method for representing time in digital systems.</p>
+
+        <p>Whether you're debugging an API response, writing a script to process log files, or building a feature that relies on timestamps, understanding how to convert between unix time and human-readable dates is a fundamental skill. Bookmark this page and use our unix timestamp converter whenever you need quick conversions without writing code.</p>
+    </article>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevUtils. All rights reserved. | <a href="/privacy/">Privacy Policy</a> | <a href="/terms/">Terms of Use</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function convertToDate() {
+            const input = document.getElementById('timestamp').value.trim();
+            const resultEl = document.getElementById('result');
+            
+            if (input.toLowerCase() === 'now') {
+                const now = Math.floor(Date.now() / 1000);
+                resultEl.textContent = new Date().toLocaleString() + ' (Unix: ' + now + ')';
+                return;
+            }
+            
+            const timestamp = parseInt(input, 10);
+            if (isNaN(timestamp)) {
+                resultEl.textContent = 'Please enter a valid unix timestamp';
+                resultEl.classList.add('error');
+                return;
+            }
+            
+            resultEl.classList.remove('error');
+            
+            // Handle milliseconds vs seconds
+            let date;
+            if (timestamp > 1e12) {
+                date = new Date(timestamp);
+            } else {
+                date = new Date(timestamp * 1000);
+            }
+            
+            if (isNaN(date.getTime())) {
+                resultEl.textContent = 'Invalid timestamp value';
+                resultEl.classList.add('error');
+                return;
+            }
+            
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZoneName: 'short'
+            };
+            
+            resultEl.textContent = date.toLocaleString('en-US', options);
+        }
+        
+        function convertToTimestamp() {
+            const input = document.getElementById('datetime').value;
+            const resultEl = document.getElementById('result');
+            
+            if (!input) {
+                resultEl.textContent = 'Please enter a date and time';
+                resultEl.classList.add('error');
+                return;
+            }
+            
+            resultEl.classList.remove('error');
+            const date = new Date(input);
+            
+            if (isNaN(date.getTime())) {
+                resultEl.textContent = 'Invalid date format';
+                resultEl.classList.add('error');
+                return;
+            }
+            
+            const timestamp = Math.floor(date.getTime() / 1000);
+            resultEl.textContent = 'Unix Timestamp: ' + timestamp + ' (' + date.toUTCString() + ')';
+        }
+        
+        function setCurrentTime() {
+            document.getElementById('timestamp').value = 'now';
+            convertToDate();
+        }
+        
+        // Allow Enter key to trigger conversion
+        document.getElementById('timestamp').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') convertToDate();
+        });
+        
+        document.getElementById('datetime').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') convertToTimestamp();
+        });
+    </script>
+</body>
+</html>
