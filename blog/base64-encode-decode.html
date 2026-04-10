@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encode/Decode in JavaScript: The Complete Guide</title>
+    <meta name="description" content="Learn how to use Base64 encoding and decoding in JavaScript. Complete guide covering btoa, atob, Buffer, and real-world use cases with examples.">
+    <meta name="keywords" content="base64 encode decode, javascript base64, btoa, atob, base64 encoding">
+    <link rel="canonical" href="https://devutils.uk/javascript/base64-encode-decode">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent: #58a6ff;
+            --accent-hover: #79b8ff;
+            --border: #30363d;
+            --code-bg: #161b22;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 16px 0;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb span {
+            margin: 0 8px;
+        }
+
+        /* Main Content */
+        main {
+            padding-bottom: 60px;
+        }
+
+        article h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.3;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .article-content {
+            font-size: 1.05rem;
+        }
+
+        article h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        article h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        article p {
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        article ul, article ol {
+            margin-bottom: 20px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        article li {
+            margin-bottom: 8px;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+
+        .code-comment { color: var(--text-muted); }
+        .code-string { color: var(--success); }
+        .code-keyword { color: var(--accent); }
+        .code-function { color: var(--warning); }
+
+        /* Info Boxes */
+        .info-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box.warning {
+            border-left-color: var(--warning);
+        }
+
+        .info-box.tip {
+            border-left-color: var(--success);
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+        }
+
+        /* Ad Slots */
+        .ad-slot {
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin: 32px 0;
+        }
+
+        .ad-slot.horizontal {
+            min-height: 100px;
+        }
+
+        .ad-slot.rectangle {
+            min-height: 250px;
+        }
+
+        /* Inline Demo */
+        .demo-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .demo-section h3 {
+            margin-top: 0;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .demo-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .demo-result {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-family: monospace;
+            word-break: break-all;
+            min-height: 48px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            article h1 {
+                font-size: 1.75rem;
+            }
+
+            .header-inner {
+                justify-content: center;
+            }
+
+            nav ul {
+                gap: 16px;
+            }
+
+            .demo-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-inner">
+            <div class="logo">Dev<span>Utils</span></div>
+            <nav>
+                <ul>
+                    <li><a href="/">Tools</a></li>
+                    <li><a href="/guides">Guides</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span>›</span>
+            <a href="/guides">Guides</a>
+            <span>›</span>
+            <a href="/guides/javascript">JavaScript</a>
+            <span>›</span>
+            <span>Base64 Encode/Decode</span>
+        </nav>
+
+        <main>
+            <article>
+                <h1>Base64 Encode/Decode in JavaScript: The Complete Guide</h1>
+                
+                <div class="article-meta">
+                    <span>📅 January 15, 2026</span>
+                    <span>⏱️ 12 min read</span>
+                    <span>👤 David Miller</span>
+                </div>
+
+                <div class="article-content">
+                    <p>Base64 encoding is a fundamental technique in web development that converts binary data into ASCII text format. Whether you're handling images, transmitting data, or working with APIs, understanding Base64 operations in JavaScript is essential. This comprehensive guide covers everything you need to know about base64 encode decode operations in modern JavaScript.</p>
+
+                    <h2 id="what-is-base64">What is Base64 Encoding?</h2>
+                    
+                    <p>Base64 is a binary-to-text encoding scheme that uses 64 different ASCII characters (A-Z, a-z, 0-9, +, and /) to represent binary data. It was originally designed for encoding email attachments in MIME format, but has since become widely used in web applications for various purposes including data URLs, API authentication, and storing binary data in JSON format.</p>
+
+                    <p>The encoding works by dividing binary data into groups of 6 bits, which can represent values from 0 to 63. Each of these values maps to one of the 64 Base64 characters. When the original data isn't divisible by 3 bytes, padding characters (=) are added to ensure the output length is a multiple of 4 characters.</p>
+
+                    <div class="info-box">
+                        <p><strong>Why Base64?</strong> Many systems only support text data. Base64 allows you to embed binary data (images, files) directly in text-based formats like JSON, XML, HTML, or CSS without data corruption.</p>
+                    </div>
+
+                    <!-- Ad Slot -->
+                    <div class="ad-slot rectangle">
+                        <span>Advertisement</span>
+                    </div>
+
+                    <h2 id="basic-encoding">Basic Encoding and Decoding in JavaScript</h2>
+
+                    <p>JavaScript provides two built-in functions for Base64 operations: <code>btoa()</code> for encoding and <code>atob()</code> for decoding. These functions have been part of the Web APIs specification for years and work in all modern browsers.</p>
+
+                    <h3 id="using-btoa">Using btoa() for Encoding</h3>
+
+                    <p>The <code>btoa()</code> function (binary to ASCII) encodes a string to Base64. It takes a regular string and returns its Base64-encoded representation:</p>
+
+<pre><code><span class="code-comment">// Simple string encoding</span>
+<span class="code-keyword">const</span> originalText = <span class="code-string">'Hello, World!'</span>;
+<span class="code-keyword">const</span> encoded = btoa(originalText);
+console.log(encoded); <span class="code-comment">// Output: SGVsbG8sIFdvcmxkIQ==</span>
+
+<span class="code-comment">// Encoding numbers and special characters</span>
+<span class="code-keyword">const</span> data = <span class="code-string">'JSON: {"name": "Alex"}'</span>;
+<span class="code-keyword">const</span> base64Data = btoa(data);
+console.log(base64Data); <span class="code-comment">// Output: SkpTTjogeyJuYW1lIjogIkFsZXgifQ==</span></code></pre>
+
+                    <h3 id="using-atob">Using atob() for Decoding</h3>
+
+                    <p>The <code>atob()</code> function (ASCII to binary) decodes a Base64-encoded string back to its original form:</p>
+
+<pre><code><span class="code-comment">// Decoding a Base64 string</span>
+<span class="code-keyword">const</span> encoded = <span class="code-string">'SGVsbG8sIFdvcmxkIQ=='</span>;
+<span class="code-keyword">const</span> decoded = atob(encoded);
+console.log(decoded); <span class="code-comment">// Output: Hello, World!</span>
+
+<span class="code-comment">// Round-trip example</span>
+<span class="code-keyword">const</span> message = <span class="code-string">'Testing Base64 encoding'</span>;
+<span class="code-keyword">const</span> encoded = btoa(message);
+<span class="code-keyword">const</span> decoded = atob(encoded);
+console.log(decoded === message); <span class="code-comment">// Output: true</span></code></pre>
+
+                    <div class="info-box warning">
+                        <p><strong>Character Limitation:</strong> The basic <code>btoa()</code> and <code>atob()</code> functions only work with Latin1 characters (character codes 0-127). For international characters, you'll need to use the Unicode workaround covered below.</p>
+                    </div>
+
+                    <h2 id="handling-unicode">Handling Unicode Strings</h2>
+
+                    <p>When working with non-ASCII characters (like emojis, Chinese text, or accented characters), the basic <code>btoa()</code> function will throw an error. This is because Base64 operates on bytes, and Unicode strings may require multiple bytes per character.</p>
+
+                    <p>To handle Unicode properly, you need to encode the string to UTF-8 first:</p>
+
+<pre><code><span class="code-comment">// Safe encoding function for Unicode strings</span>
+<span class="code-keyword">function</span> <span class="code-function">toBase64</span>(str) {
+    <span class="code-comment">// Encode as UTF-8, then to Base64</span>
+    <span class="code-keyword">const</span> utf8Bytes = <span class="code-keyword">new</span> TextEncoder().encode(str);
+    <span class="code-keyword">let</span> binary = <span class="code-string">''</span>;
+    utf8Bytes.forEach(byte => {
+        binary += String.fromCharCode(byte);
+    });
+    <span class="code-keyword">return</span> btoa(binary);
+}
+
+<span class="code-comment">// Safe decoding function for Unicode strings</span>
+<span class="code-keyword">function</span> <span class="code-function">fromBase64</span>(base64Str) {
+    <span class="code-keyword">const</span> binary = atob(base64Str);
+    <span class="code-keyword">const</span> bytes = <span class="code-keyword">new</span> Uint8Array(binary.length);
+    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    <span class="code-keyword">return</span> <span class="code-keyword">new</span> TextDecoder().decode(bytes);
+}
+
+<span class="code-comment">// Works with any Unicode character</span>
+<span class="code-keyword">const</span> emoji = <span class="code-string">'Hello 👋 World 🌍'</span>;
+<span class="code-keyword">const</span> encoded = <span class="code-function">toBase64</span>(emoji);
+console.log(encoded); <span class="code-comment">// Output: SGVsbG8g8KjUIFdvcmxkIPyjyj88</span>
+console.log(<span class="code-function">fromBase64</span>(encoded)); <span class="code-comment">// Output: Hello 👋 World 🌍</span></code></pre>
+
+                    <!-- Ad Slot -->
+                    <div class="ad-slot horizontal">
+                        <span>Advertisement</span>
+                    </div>
+
+                    <h2 id="nodejs-buffer">Node.js Buffer Approach</h2>
+
+                    <p>If you're working in a Node.js environment, you have additional options using the built-in <code>Buffer</code> class, which provides a more straightforward API for Base64 operations.</p>
+
+<pre><code><span class="code-comment">// Node.js Buffer encoding</span>
+<span class="code-keyword">const</span> text = <span class="code-string">'Hello from Node.js!'</span>;
+<span class="code-keyword">const</span> encoded = Buffer.from(text).toString(<span class="code-string">'base64'</span>);
+console.log(encoded); <span class="code-comment">// Output: SGVsbG8gZnJvbSBOb2RlLmpzIQ==</span>
+
+<span class="code-comment">// Node.js Buffer decoding</span>
+<span class="code-keyword">const</span> decoded = Buffer.from(encoded, <span class="code-string">'base64'</span>).toString(<span class="code-string">'utf-8'</span>);
+console.log(decoded); <span class="code-comment">// Output: Hello from Node.js!</span>
+
+<span class="code-comment">// Working with Buffers directly</span>
+<span class="code-keyword">const</span> buffer = Buffer.from(<span class="code-string">'Test data'</span>);
+console.log(buffer.toString(<span class="code-string">'base64'</span>)); <span class="code-comment">// Output: VGVzdCBkYXRh</span></code></pre>
+
+                    <h2 id="practical-examples">Practical Examples</h2>
+
+                    <h3 id="image-to-base64">Converting Images to Base64</h3>
+
+                    <p>One common use case is converting image files to Base64 for embedding directly in HTML or CSS, creating data URLs:</p>
+
+<pre><code><span class="code-comment">// Converting a file input to Base64</span>
+<span class="code-keyword">const</span> fileInput = document.querySelector(<span class="code-string">'input[type="file"]'</span>);
+
+fileInput.addEventListener(<span class="code-string">'change'</span>, (e) => {
+    <span class="code-keyword">const</span> file = e.target.files[0];
+    <span class="code-keyword">const</span> reader = <span class="code-keyword">new</span> FileReader();
+    
+    reader.onload = () => {
+        <span class="code-keyword">const</span> base64 = reader.result;
+        console.log(base64); <span class="code-comment">// data:image/png;base64,...</span>
+    };
+    
+    reader.readAsDataURL(file);
+});
+
+<span class="code-comment">// Manual conversion for Canvas data</span>
+<span class="code-keyword">const</span> canvas = document.querySelector(<span class="code-string">'canvas'</span>);
+canvas.toDataURL(<span class="code-string">'image/png'</span>); <span class="code-comment">// Returns Base64 data URL</span></code></pre>
+
+                    <h3 id="api-authentication">API Authentication</h3>
+
+                    <p>Base64 encoding is commonly used for Basic Authentication in HTTP headers:</p>
+
+<pre><code><span class="code-comment">// Creating Basic Auth header</span>
+<span class="code-keyword">function</span> <span class="code-function">createBasicAuth</span>(username, password) {
+    <span class="code-keyword">const</span> credentials = <span class="code-string">`</span>${username}<span class="code-string">:</span>${password}<span class="code-string">`</span>;
+    <span class="code-keyword">const</span> base64Credentials = btoa(credentials);
+    <span class="code-keyword">return</span> <span class="code-string">`Basic </span>${base64Credentials}<span class="code-string">`</span>;
+}
+
+<span class="code-comment">// Using with fetch</span>
+<span class="code-keyword">async function</span> <span class="code-function">fetchWithAuth</span>(url, username, password) {
+    <span class="code-keyword">const</span> response = await fetch(url, {
+        headers: {
+            <span class="code-string">'Authorization'</span>: <span class="code-function">createBasicAuth</span>(username, password)
+        }
+    });
+    <span class="code-keyword">return</span> response.json();
+}</code></pre>
+
+                    <h3 id="local-storage">Storing Binary Data in LocalStorage</h3>
+
+                    <p>LocalStorage only supports strings, so Base64 encoding is essential when storing binary data:</p>
+
+<pre><code><span class="code-comment">// Save binary data to localStorage</span>
+<span class="code-keyword">function</span> <span class="code-function">saveToStorage</span>(key, data) {
+    <span class="code-keyword">const</span> encoded = btoa(data);
+    localStorage.setItem(key, encoded);
+}
+
+<span class="code-comment">// Retrieve and decode from localStorage</span>
+<span class="code-keyword">function</span> <span class="code-function">loadFromStorage</span>(key) {
+    <span class="code-keyword">const</span> encoded = localStorage.getItem(key);
+    <span class="code-keyword">return</span> encoded ? atob(encoded) : <span class="code-keyword">null</span>;
+}</code></pre>
+
+                    <!-- Ad Slot -->
+                    <div class="ad-slot rectangle">
+                        <span>Advertisement</span>
+                    </div>
+
+                    <h2 id="url-safe-base64">URL-Safe Base64</h2>
+
+                    <p>Standard Base64 uses characters like <code>+</code> and <code>/</code> that can cause issues in URLs. For URL-safe encoding, use URL-safe Base64 variant:</p>
+
+<pre><code><span class="code-comment">// URL-safe Base64 encoding</span>
+<span class="code-keyword">function</span> <span class="code-function">toBase64Url</span>(str) {
+    <span class="code-keyword">return</span> btoa(str)
+        .replace(<span class="code-string">'+'</span>, <span class="code-string">'-'</span>)
+        .replace(<span class="code-string">'/'</span>, <span class="code-string">'_'</span>)
+        .replace(/=+$/, <span class="code-string">''</span>);
+}
+
+<span class="code-comment">// URL-safe Base64 decoding</span>
+<span class="code-keyword">function</span> <span class="code-function">fromBase64Url</span>(str) {
+    <span class="code-keyword">let</span> base64 = str.replace(<span class="code-string">'-'</span>, <span class="code-string">'+'</span>).replace(<span class="code-string">'_'</span>, <span class="code-string">'/'</span>);
+    <span class="code-comment">// Add padding if needed</span>
+    <span class="code-keyword">while</span> (base64.length % 4) {
+        base64 += <span class="code-string">'='</span>;
+    }
+    <span class="code-keyword">return</span> atob(base64);
+}</code></pre>
+
+                    <h2 id="performance">Performance Considerations</h2>
+
+                    <p>When working with large amounts of data, Base64 encoding can impact performance. Here are some tips:</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data Size</th>
+                                <th>Overhead</th>
+                                <th>Recommendation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Small (&lt; 1KB)</td>
+                                <td>~33%</td>
+                                <td>No concerns, use freely</td>
+                            </tr>
+                            <tr>
+                                <td>Medium (1KB - 100KB)</td>
+                                <td>~33%</td>
+                                <td>Consider lazy loading</td>
+                            </tr>
+                            <tr>
+                                <td>Large (&gt; 100KB)</td>
+                                <td>~33%</td>
+                                <td>Avoid if possible, use files</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box tip">
+                        <p><strong>Performance Tip:</strong> For large files, consider using Web Workers to perform encoding/decoding off the main thread to prevent UI blocking.</p>
+                    </div>
+
+                    <h2 id="browser-support">Browser Support</h2>
+
+                    <p>The <code>btoa()</code> and <code>atob()</code> functions are supported in all modern browsers including Chrome, Firefox, Safari, Edge, and Internet Explorer 10+. The Unicode-safe approaches using <code>TextEncoder</code> and <code>TextDecoder</code> are supported in all browsers that support the Web APIs specification.</p>
+
+                    <h2 id="summary">Summary</h2>
+
+                    <p>Base64 encoding is an essential tool in every JavaScript developer's toolkit. Here's what we covered in this guide:</p>
+
+                    <ul>
+                        <li><strong>Basic encoding:</strong> Use <code>btoa()</code> for simple ASCII strings</li>
+                        <li><strong>Basic decoding:</strong> Use <code>atob()</code> to reverse the process</li>
+                        <li><strong>Unicode support:</strong> Use <code>TextEncoder</code>/<code>TextDecoder</code> for international characters</li>
+                        <li><strong>Node.js:</strong> Use <code>Buffer.from().toString('base64')</code></li>
+                        <li><strong>URL-safe encoding:</strong> Replace <code>+</code>/<code>/</code> with <code>-</code>/<code>_</code></li>
+                        <li><strong>Common use cases:</strong> Images, API auth, localStorage, data URLs</li>
+                    </ul>
+
+                    <p>Understanding these base64 encode decode operations will help you handle binary data effectively in any JavaScript project, whether you're building web applications, working with APIs, or processing user uploads.</p>
+
+                    <!-- Ad Slot -->
+                    <div class="ad-slot horizontal">
+                        <span>Advertisement</span>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="copyright">
+                © 2026 DevUtils. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
