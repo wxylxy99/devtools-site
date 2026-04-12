@@ -700,6 +700,50 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
 @media (max-width: 420px) {
   .bento-tools .tool-card:nth-child(4) { grid-column: span 1; }
 }
+
+/* ========== RESPONSIVE / MOBILE ========== */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr !important;
+    padding: 20px 16px 40px;
+    gap: 16px;
+  }
+  .sidebar {
+    display: none; /* ads hidden on mobile, save bandwidth */
+  }
+  .bento-tools {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .bento-tools .tool-card:nth-child(4),
+  .bento-tools .tool-card:nth-child(5),
+  .bento-tools .tool-card:nth-child(6) {
+    grid-column: span 1 !important;
+  }
+  .hero { padding: 28px 0 20px; }
+  .hero h1 { font-size: 1.75rem; }
+  .hero p { font-size: 0.875rem; }
+  .header { padding: 0 16px; }
+  .nav a { display: none; }
+  .nav .nav-lang { display: flex !important; }
+  .search-bar { max-width: 100%; }
+  .bento-ad-banner { margin: 16px 0; }
+}
+
+@media (max-width: 600px) {
+  .bento-tools {
+    grid-template-columns: 1fr !important;
+  }
+  .tool-card { padding: 16px; }
+  .tool-row {
+    grid-template-columns: 1fr !important;
+  }
+  .workspace { padding: 16px; border-radius: 12px; }
+}
+
+@media (max-width: 768px) {
+  .hamburger { display: flex !important; }
+  .nav { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -784,14 +828,45 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
     </div>
     Dev<span>ToolBox</span>
   </div>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menu" style="
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-standard);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+">
+  <span style="width:16px;height:2px;background:var(--text-secondary);border-radius:1px;display:block;transition:all 0.2s;"></span>
+  <span style="width:16px;height:2px;background:var(--text-secondary);border-radius:1px;display:block;transition:all 0.2s;"></span>
+  <span style="width:16px;height:2px;background:var(--text-secondary);border-radius:1px;display:block;transition:all 0.2s;"></span>
+</button>
   <nav class="nav">
-    <a href="#" onclick="showHome(); return false;" class="active">Tools</a>
-    <a href="about.html">About</a>
-    <a href="privacy.html">Privacy</a>
+    <a href="#" onclick="showHome(); return false;" class="active" data-i18n="nav_tools">Tools</a>
+    <a href="about.html" data-i18n="nav_about">About</a>
+    <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
       <svg class="icon-sun"><use href="#icon-sun"/></svg>
       <svg class="icon-moon"><use href="#icon-moon"/></svg>
     </button>
+    <button class="lang-toggle nav-lang" aria-label="Switch to Chinese" style="
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-standard);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  display: none;
+">中文</button>
   </nav>
 </header>
 
@@ -803,13 +878,13 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
     <div class="hero" id="hero">
       <div class="hero-badge">
         <span class="hero-badge-dot"></span>
-        All tools run locally — 100% private
+        <span data-i18n="badge_label">All tools run locally — 100% private</span>
       </div>
-      <h1>Developer Tools,<br>No Sign-up Required</h1>
-      <p>Fast, private, browser-based utilities for developers. All processing happens locally — your data never leaves your machine.</p>
+      <h1 data-i18n="hero_title">Developer Tools,<br>No Sign-up Required</h1>
+      <p data-i18n="hero_desc">Fast, private, browser-based utilities for developers. All processing happens locally — your data never leaves your machine.</p>
       <div class="search-bar">
         <svg><use href="#icon-search"/></svg>
-        <input type="text" placeholder="Search tools... (JSON, Base64, Regex...)" id="searchInput" oninput="filterTools()">
+        <input type="text" data-i18n="search_placeholder" placeholder="Search tools... (JSON, Base64, Regex...)" id="searchInput" oninput="filterTools()">
       </div>
     </div>
 
@@ -826,61 +901,61 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
     </div>
 
     <!-- Tool Cards - Bento Grid -->
-    <p class="section-label">All Tools <span style="font-weight:400;text-transform:none;letter-spacing:0;">6 tools</span></p>
+    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count">6 tools</span></p>
     <div class="bento-tools" id="toolCards">
 
       <div class="tool-card" onclick="openTool('json')" data-tool="json">
         <div class="tool-card-icon">
           <svg><use href="#icon-json"/></svg>
         </div>
-        <h3>JSON Formatter</h3>
-        <p>Format, validate, and minify JSON data with syntax highlighting.</p>
-        <span class="tool-card-tag">Popular</span>
+        <h3 data-i18n="t_json_name">JSON Formatter</h3>
+        <p data-i18n="t_json_desc">Format, validate, and minify JSON data with syntax highlighting.</p>
+        <span class="tool-card-tag" data-i18n="t_json_tag">Popular</span>
       </div>
 
       <div class="tool-card" onclick="openTool('base64')" data-tool="base64">
         <div class="tool-card-icon">
           <svg><use href="#icon-code"/></svg>
         </div>
-        <h3>Base64 Encoder / Decoder</h3>
-        <p>Encode and decode Base64 strings with full Unicode support.</p>
-        <span class="tool-card-tag">Common</span>
+        <h3 data-i18n="t_b64_name">Base64 Encoder / Decoder</h3>
+        <p data-i18n="t_b64_desc">Encode and decode Base64 strings with full Unicode support.</p>
+        <span class="tool-card-tag" data-i18n="t_b64_tag">Common</span>
       </div>
 
       <div class="tool-card" onclick="openTool('timestamp')" data-tool="timestamp">
         <div class="tool-card-icon">
           <svg><use href="#icon-clock"/></svg>
         </div>
-        <h3>Timestamp Converter</h3>
-        <p>Convert between Unix timestamps and human-readable dates instantly.</p>
-        <span class="tool-card-tag">Essential</span>
+        <h3 data-i18n="t_ts_name">Timestamp Converter</h3>
+        <p data-i18n="t_ts_desc">Convert between Unix timestamps and human-readable dates instantly.</p>
+        <span class="tool-card-tag" data-i18n="t_ts_tag">Essential</span>
       </div>
 
       <div class="tool-card" onclick="openTool('color')" data-tool="color">
         <div class="tool-card-icon">
           <svg><use href="#icon-palette"/></svg>
         </div>
-        <h3>Color Converter</h3>
-        <p>Convert colors between HEX, RGB, and HSL formats instantly with live preview.</p>
-        <span class="tool-card-tag">Visual</span>
+        <h3 data-i18n="t_color_name">Color Converter</h3>
+        <p data-i18n="t_color_desc">Convert colors between HEX, RGB, and HSL formats instantly with live preview.</p>
+        <span class="tool-card-tag" data-i18n="t_color_tag">Visual</span>
       </div>
 
       <div class="tool-card" onclick="openTool('regex')" data-tool="regex">
         <div class="tool-card-icon">
           <svg><use href="#icon-regex"/></svg>
         </div>
-        <h3>Regex Tester</h3>
-        <p>Test regular expressions with real-time matching and validation for any pattern.</p>
-        <span class="tool-card-tag">Advanced</span>
+        <h3 data-i18n="t_regex_name">Regex Tester</h3>
+        <p data-i18n="t_regex_desc">Test regular expressions with real-time matching and validation for any pattern.</p>
+        <span class="tool-card-tag" data-i18n="t_regex_tag">Advanced</span>
       </div>
 
       <div class="tool-card" onclick="openTool('url')" data-tool="url">
         <div class="tool-card-icon">
           <svg><use href="#icon-link"/></svg>
         </div>
-        <h3>URL Encoder / Decoder</h3>
-        <p>Encode and decode URLs for safe transmission over the web.</p>
-        <span class="tool-card-tag">Web</span>
+        <h3 data-i18n="t_url_name">URL Encoder / Decoder</h3>
+        <p data-i18n="t_url_desc">Encode and decode URLs for safe transmission over the web.</p>
+        <span class="tool-card-tag" data-i18n="t_url_tag">Web</span>
       </div>
 
     </div>
@@ -892,7 +967,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="workspace-header">
         <h2>
           <svg><use href="#icon-json"/></svg>
-          JSON Formatter
+          <span data-i18n="t_json_name">JSON Formatter</span>
         </h2>
         <button class="btn-back" onclick="showHome()">
           <svg><use href="#icon-back"/></svg>
@@ -901,18 +976,18 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       </div>
       <div class="tool-row">
         <div>
-          <label>Input</label>
+          <label data-i18n="ws_input">Input</label>
           <textarea id="jsonInput" placeholder='Paste JSON here...'></textarea>
         </div>
         <div>
-          <label>Output</label>
+          <label data-i18n="ws_output">Output</label>
           <textarea id="jsonOutput" readonly placeholder="Formatted output..."></textarea>
         </div>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" onclick="jsonFormat()">Format</button>
-        <button class="btn" onclick="jsonMinify()">Minify</button>
-        <button class="btn" onclick="jsonClear()">Clear</button>
+        <button class="btn btn-primary" onclick="jsonFormat()" data-i18n="ws_format">Format</button>
+        <button class="btn" onclick="jsonMinify()" data-i18n="ws_minify">Minify</button>
+        <button class="btn" onclick="jsonClear()" data-i18n="ws_clear">Clear</button>
       </div>
       <div class="status-bar" id="jsonStatus">
         <span>Ready</span>
@@ -924,7 +999,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="workspace-header">
         <h2>
           <svg><use href="#icon-code"/></svg>
-          Base64 Encoder / Decoder
+          <span data-i18n="t_b64_name">Base64 Encoder / Decoder</span>
         </h2>
         <button class="btn-back" onclick="showHome()">
           <svg><use href="#icon-back"/></svg>
@@ -933,18 +1008,18 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       </div>
       <div class="tool-row">
         <div>
-          <label>Input</label>
+          <label data-i18n="ws_input">Input</label>
           <textarea id="b64Input" placeholder="Enter text or Base64 string..."></textarea>
         </div>
         <div>
-          <label>Output</label>
+          <label data-i18n="ws_output">Output</label>
           <textarea id="b64Output" readonly placeholder="Result..."></textarea>
         </div>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" onclick="b64Encode()">Encode</button>
-        <button class="btn" onclick="b64Decode()">Decode</button>
-        <button class="btn" onclick="b64Clear()">Clear</button>
+        <button class="btn btn-primary" onclick="b64Encode()" data-i18n="ws_encode">Encode</button>
+        <button class="btn" onclick="b64Decode()" data-i18n="ws_decode">Decode</button>
+        <button class="btn" onclick="b64Clear()" data-i18n="ws_clear">Clear</button>
       </div>
       <div class="status-bar" id="b64Status">
         <span>Ready</span>
@@ -956,7 +1031,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="workspace-header">
         <h2>
           <svg><use href="#icon-clock"/></svg>
-          Timestamp Converter
+          <span data-i18n="t_ts_name">Timestamp Converter</span>
         </h2>
         <button class="btn-back" onclick="showHome()">
           <svg><use href="#icon-back"/></svg>
@@ -974,15 +1049,15 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         </div>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" onclick="tsNow()">Use Now</button>
+        <button class="btn btn-primary" onclick="tsNow()" data-i18n="ws_now">Use Now</button>
       </div>
       <div class="ts-results" id="tsResults">
         <div class="ts-result-item">
-          <div class="label">UTC Time</div>
+          <div class="label" data-i18n="ws_utc">UTC Time</div>
           <div class="value" id="tsUTC">-</div>
         </div>
         <div class="ts-result-item">
-          <div class="label">Local Time</div>
+          <div class="label" data-i18n="ws_local">Local Time</div>
           <div class="value" id="tsLocal">-</div>
         </div>
         <div class="ts-result-item">
@@ -1001,7 +1076,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="workspace-header">
         <h2>
           <svg><use href="#icon-palette"/></svg>
-          Color Converter
+          <span data-i18n="t_color_name">Color Converter</span>
         </h2>
         <button class="btn-back" onclick="showHome()">
           <svg><use href="#icon-back"/></svg>
@@ -1030,7 +1105,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="workspace-header">
         <h2>
           <svg><use href="#icon-regex"/></svg>
-          Regex Tester
+          <span data-i18n="t_regex_name">Regex Tester</span>
         </h2>
         <button class="btn-back" onclick="showHome()">
           <svg><use href="#icon-back"/></svg>
@@ -1039,16 +1114,16 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       </div>
       <div class="tool-row">
         <div>
-          <label>Pattern</label>
+          <label data-i18n="ws_pattern">Pattern</label>
           <input type="text" id="regexPattern" placeholder="e.g. \d+" oninput="regexTest()">
         </div>
         <div>
-          <label>Flags</label>
+          <label data-i18n="ws_flags">Flags</label>
           <input type="text" id="regexFlags" value="g" placeholder="e.g. gi" oninput="regexTest()">
         </div>
       </div>
       <div style="margin-bottom: 12px;">
-        <label>Test String</label>
+        <label data-i18n="ws_test_string">Test String</label>
         <textarea id="regexTestStr" placeholder="Enter test string..." oninput="regexTest()"></textarea>
       </div>
       <div class="status-bar" id="regexStatus">
@@ -1061,7 +1136,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="workspace-header">
         <h2>
           <svg><use href="#icon-link"/></svg>
-          URL Encoder / Decoder
+          <span data-i18n="t_url_name">URL Encoder / Decoder</span>
         </h2>
         <button class="btn-back" onclick="showHome()">
           <svg><use href="#icon-back"/></svg>
@@ -1070,17 +1145,17 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       </div>
       <div class="tool-row">
         <div>
-          <label>Input</label>
+          <label data-i18n="ws_input">Input</label>
           <textarea id="urlInput" placeholder="Enter URL or text..."></textarea>
         </div>
         <div>
-          <label>Output</label>
+          <label data-i18n="ws_output">Output</label>
           <textarea id="urlOutput" readonly placeholder="Result..."></textarea>
         </div>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" onclick="urlEncode()">Encode</button>
-        <button class="btn" onclick="urlDecode()">Decode</button>
+        <button class="btn btn-primary" onclick="urlEncode()" data-i18n="ws_encode">Encode</button>
+        <button class="btn" onclick="urlDecode()" data-i18n="ws_decode">Decode</button>
       </div>
     </div>
 
@@ -1128,14 +1203,179 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
 
 <!-- Footer -->
 <footer class="footer">
-  <div>&copy; 2024 DevToolBox. All rights reserved.</div>
+  <div data-i18n="footer_rights">&copy; 2024 DevToolBox. All rights reserved.</div>
   <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Service</a>
+    <a href="index.html" data-i18n="footer_home">Home</a>
+    <a href="about.html" data-i18n="footer_about">About</a>
+    <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+    <a href="terms.html" data-i18n="footer_terms">Terms of Service</a>
   </div>
 </footer>
+
+<script>
+/* ---- i18n System ---- */
+const I18N = {
+  en: {
+    nav_tools: "Tools",
+    nav_about: "About",
+    nav_privacy: "Privacy",
+    badge_label: "● All tools run locally — 100% private",
+    hero_title: "Developer Tools,<br>No Sign-up Required",
+    hero_desc: "Fast, private, browser-based utilities for developers. All processing happens locally — your data never leaves your machine.",
+    search_placeholder: "Search tools... (JSON, Base64, Regex...)",
+    section_all_tools: "All Tools",
+    tool_count: "6 tools",
+    /* Tool names */
+    t_json_name: "JSON Formatter",
+    t_json_desc: "Format, validate, and minify JSON data with syntax highlighting.",
+    t_json_tag: "Popular",
+    t_b64_name: "Base64 Encoder / Decoder",
+    t_b64_desc: "Encode and decode Base64 strings with full Unicode support.",
+    t_b64_tag: "Common",
+    t_ts_name: "Timestamp Converter",
+    t_ts_desc: "Convert between Unix timestamps and human-readable dates instantly.",
+    t_ts_tag: "Essential",
+    t_color_name: "Color Converter",
+    t_color_desc: "Convert colors between HEX, RGB, and HSL formats instantly with live preview.",
+    t_color_tag: "Visual",
+    t_regex_name: "Regex Tester",
+    t_regex_desc: "Test regular expressions with real-time matching and validation for any pattern.",
+    t_regex_tag: "Advanced",
+    t_url_name: "URL Encoder / Decoder",
+    t_url_desc: "Encode and decode URLs for safe transmission over the web.",
+    t_url_tag: "Web",
+    /* Workspace labels */
+    ws_input: "Input",
+    ws_output: "Output",
+    ws_format: "Format",
+    ws_minify: "Minify",
+    ws_clear: "Clear",
+    ws_copy: "Copy",
+    ws_paste: "Paste",
+    ws_now: "Use Now",
+    ws_encode: "Encode",
+    ws_decode: "Decode",
+    ws_copy_btn: "Copy Output",
+    ws_clear_btn: "Clear",
+    ws_pattern: "Pattern",
+    ws_flags: "Flags",
+    ws_test_string: "Test String",
+    ws_matches: "Matches",
+    ws_no_match: "No matches found",
+    ws_copied: "Copied!",
+    ws_invalid: "Invalid",
+    ws_utc: "UTC Time",
+    ws_local: "Local Time",
+    /* Footer */
+    footer_rights: "© 2024 DevToolBox. All rights reserved.",
+    footer_home: "Home",
+    footer_about: "About",
+    footer_privacy: "Privacy Policy",
+    footer_terms: "Terms of Service",
+  },
+  zh: {
+    nav_tools: "工具",
+    nav_about: "关于",
+    nav_privacy: "隐私",
+    badge_label: "● 所有工具在本地运行 — 100% 私密",
+    hero_title: "开发者工具箱，无须注册",
+    hero_desc: "快速、私密、基于浏览器的开发者工具。所有处理均在本地完成 — 您的数据永远不会离开您的设备。",
+    search_placeholder: "搜索工具... (JSON, Base64, Regex...)",
+    section_all_tools: "全部工具",
+    tool_count: "共 6 个工具",
+    /* Tool names */
+    t_json_name: "JSON 格式化器",
+    t_json_desc: "格式化、验证和压缩 JSON 数据，支持语法高亮。",
+    t_json_tag: "热门",
+    t_b64_name: "Base64 编码器 / 解码器",
+    t_b64_desc: "对 Base64 字符串进行编码和解码，支持完整 Unicode。",
+    t_b64_tag: "常用",
+    t_ts_name: "时间戳转换器",
+    t_ts_desc: "在 Unix 时间戳和可读日期之间即时转换。",
+    t_ts_tag: "必备",
+    t_color_name: "颜色转换器",
+    t_color_desc: "在 HEX、RGB 和 HSL 格式之间即时转换颜色，支持实时预览。",
+    t_color_tag: "视觉",
+    t_regex_name: "正则表达式测试器",
+    t_regex_desc: "使用实时匹配和验证测试任何正则表达式模式。",
+    t_regex_tag: "高级",
+    t_url_name: "URL 编码器 / 解码器",
+    t_url_desc: "对 URL 进行编码和解码，确保安全传输。",
+    t_url_tag: "网页",
+    /* Workspace labels */
+    ws_input: "输入",
+    ws_output: "输出",
+    ws_format: "格式化",
+    ws_minify: "压缩",
+    ws_clear: "清空",
+    ws_copy: "复制",
+    ws_paste: "粘贴",
+    ws_now: "当前时间",
+    ws_encode: "编码",
+    ws_decode: "解码",
+    ws_copy_btn: "复制输出",
+    ws_clear_btn: "清空",
+    ws_pattern: "正则表达式",
+    ws_flags: "标志",
+    ws_test_string: "测试字符串",
+    ws_matches: "匹配结果",
+    ws_no_match: "未找到匹配",
+    ws_copied: "已复制！",
+    ws_invalid: "无效",
+    ws_utc: "UTC 时间",
+    ws_local: "本地时间",
+    /* Footer */
+    footer_rights: "© 2024 DevToolBox. 保留所有权利。",
+    footer_home: "首页",
+    footer_about: "关于",
+    footer_privacy: "隐私政策",
+    footer_terms: "服务条款",
+  }
+};
+
+/* Current lang state */
+let currentLang = localStorage.getItem('lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  applyTranslations();
+  /* Also update lang attribute on html for accessibility */
+  document.documentElement.lang = lang;
+}
+
+function applyTranslations() {
+  const t = I18N[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      /* hero_title contains <br> tags - use innerHTML */
+      if (key === 'hero_title') {
+        el.innerHTML = t[key];
+      } else {
+        el.textContent = t[key];
+      }
+    }
+  });
+  /* Update language toggle button label */
+  var langBtn = document.querySelector('.lang-toggle');
+  if (langBtn) {
+    langBtn.textContent = currentLang === 'en' ? '中文' : 'EN';
+    langBtn.setAttribute('aria-label', currentLang === 'en' ? 'Switch to Chinese' : '切换到英文');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  applyTranslations();
+  /* Lang toggle button click */
+  var langBtn = document.querySelector('.lang-toggle');
+  if (langBtn) {
+    langBtn.addEventListener('click', function() {
+      setLang(currentLang === 'en' ? 'zh' : 'en');
+    });
+  }
+});
+</script>
 
 <script>
 // ========== Theme Toggle ==========
@@ -1485,6 +1725,31 @@ function urlCopy() {
 
   tick();
 })();
+</script>
+<div id="mobileMenu" style="display:none;position:fixed;inset:56px 0 0 0;background:var(--bg);z-index:99;padding:20px 16px;overflow-y:auto;">
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <a href="#" data-i18n="nav_tools" style="color:var(--text-primary);font-size:1rem;font-weight:500;padding:12px 16px;background:var(--surface-1);border-radius:10px;border:1px solid var(--border-subtle);display:block;" onclick="document.getElementById('mobileMenu').style.display='none'"></a>
+    <a href="about.html" data-i18n="nav_about" style="color:var(--text-primary);font-size:1rem;font-weight:500;padding:12px 16px;background:var(--surface-1);border-radius:10px;border:1px solid var(--border-subtle);display:block;" onclick="document.getElementById('mobileMenu').style.display='none'"></a>
+    <a href="privacy.html" data-i18n="nav_privacy" style="color:var(--text-primary);font-size:1rem;font-weight:500;padding:12px 16px;background:var(--surface-1);border-radius:10px;border:1px solid var(--border-subtle);display:block;" onclick="document.getElementById('mobileMenu').style.display='none'"></a>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button onclick="setLang('en')" style="flex:1;padding:12px;background:var(--surface-1);border:1px solid var(--border-standard);border-radius:10px;color:var(--text-secondary);font-size:0.9rem;cursor:pointer;font-family:'Inter',sans-serif;">English</button>
+      <button onclick="setLang('zh')" style="flex:1;padding:12px;background:var(--surface-1);border:1px solid var(--border-standard);border-radius:10px;color:var(--text-secondary);font-size:0.9rem;cursor:pointer;font-family:'Inter',sans-serif;">中文</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button onclick="toggleTheme()" style="flex:1;padding:12px;background:var(--surface-1);border:1px solid var(--border-standard);border-radius:10px;color:var(--text-secondary);font-size:0.9rem;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        Toggle Theme
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('hamburgerBtn').addEventListener('click', function() {
+  var menu = document.getElementById('mobileMenu');
+  var isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : 'block';
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+});
 </script>
 </body>
 </html>
