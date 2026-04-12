@@ -5,6 +5,7 @@ generate_tutorials.py
 支持调用 OpenAI / Anthropic / OpenRouter 兼容 API。
 """
 
+from __future__ import annotations
 import json
 import os
 import sys
@@ -12,6 +13,7 @@ import time
 import re
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 # ─── Config ──────────────────────────────────────────────────────────────
 
@@ -41,7 +43,7 @@ import urllib.request
 import urllib.error
 
 
-def call_llm(system: str, user: str) -> str:
+def call_llm(system: str, user: str) -> Optional[str]:
     """Call LLM API and return the response text."""
 
     if LLM_PROVIDER == "anthropic":
@@ -141,7 +143,7 @@ Return the JSON only."""
 
 # ─── HTML Generator ────────────────────────────────────────────────────────
 
-def generate_tutorial_html(post: dict, rewritten: dict = None) -> str:
+def generate_tutorial_html(post: dict, rewritten: Optional[dict] = None) -> str:
     """Generate a tutorial HTML page from a post dict."""
 
     tags = rewritten.get("tags", post.get("tags", [])) if rewritten else post.get("tags", [])
