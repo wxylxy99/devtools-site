@@ -10,6 +10,7 @@ tutorials_collector.py
 6. 生成新 HTML 教程页面
 """
 
+from __future__ import annotations
 import json
 import re
 import os
@@ -20,6 +21,7 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Optional
 
 # ─── Config ────────────────────────────────────────────────────────────────
 
@@ -79,8 +81,8 @@ CURATED_TOOLS = [
     },
     {
         "name": "Hermes Agent",
-        "repo": "howie9494/hermes-agent",
-        "docs_url": "https://github.com/howie9494/hermes-agent",
+        "repo": "hermes-agent/hermes-agent",
+        "docs_url": "https://github.com/hermes-agent/hermes-agent",
         "tutorial_focus": ["配置", "使用教程", "插件开发", "Telegram"],
         "icon": "⚡",
         "tags": ["Hermes", "Agent", "Telegram", "Cron"],
@@ -89,7 +91,7 @@ CURATED_TOOLS = [
 
 # ─── HTTP Helper ──────────────────────────────────────────────────────────
 
-def fetch(url: str, headers: dict = None, timeout: int = 15) -> str | None:
+def fetch(url: str, headers: Optional[dict] = None, timeout: int = 15) -> Optional[str]:
     headers = headers or {}
     headers.setdefault("User-Agent", "Mozilla/5.0 tutorials-collector/1.0")
     req = urllib.request.Request(url, headers=headers)
@@ -101,7 +103,7 @@ def fetch(url: str, headers: dict = None, timeout: int = 15) -> str | None:
         return None
 
 
-def fetch_json(url: str, headers: dict = None) -> dict | None:
+def fetch_json(url: str, headers: Optional[dict] = None) -> Optional[dict]:
     headers = dict(headers or {})
     headers["Accept"] = "application/vnd.github+json"
     if GITHUB_TOKEN:
@@ -123,7 +125,12 @@ def get_github_trending(days: int = 7, limit: int = 20) -> list[dict]:
     results = []
 
     for lang in languages:
-        url = f"https://api.github.com/search/repositories?q=stars:>100+pushed:>{datetime.now()-timedelta(days)}&l={lang}&sort=stars&order=desc&per_page={limit}"
+        pushed_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+        # Build query and encode each part separately
+        query_parts = [
+            ("q", f"stars:%3E100+pushed:%3E{pushed_date}"),
+        ]
+        url = f"https://api.github.com/search/repositories?q=stars:%3E100+pushed:%3E{pushed_date}&l={lang}&sort=stars&order=desc&per_page={limit}"
         data = fetch_json(url)
         if not data or "items" not in data:
             continue
