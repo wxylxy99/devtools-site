@@ -1,9 +1,10 @@
 {
+  "lastUpdated": "2026-04-15",
   "posts": [
     {
       "slug": "jwt-token-decoder",
       "title": "JWT Token Decoder: Decode and Validate JWT Tokens Online",
-      "description": "JWT (JSON Web Token) is the most common authentication scheme in modern web development. Learn how JWT works, its structure, and how to debug it online.",
+      "description": "JWT (JSON Web Token) is the most common authentication scheme in modern web development.",
       "date": "2026-04-15",
       "tags": [
         "JWT",
@@ -16,10 +17,11 @@
     {
       "slug": "url-encoder-decoder",
       "title": "URL Encoder / Decoder: Encode Decode URLs Online Free",
-      "description": "Encode and decode URLs instantly. Safely transmit special characters over the web with percent-encoding (URL encoding) explained.",
-      "date": "2026-04-15",
+      "description": "Encode and decode URLs with full Unicode support. Learn percent-encoding.",
+      "date": "2026-04-14",
       "tags": [
-        "URL Encoder / Decoder"
+        "URL",
+        "Web"
       ],
       "readTime": "5 min",
       "url": "/blog/url-encoder-decoder.html",
@@ -28,10 +30,11 @@
     {
       "slug": "regex-tester",
       "title": "Regex Tester: Test Regular Expressions Online Free",
-      "description": "Test and debug regular expressions in real-time. Supports JavaScript, Python, and PCRE syntax with instant match highlighting and group extraction.",
-      "date": "2026-04-15",
+      "description": "Test and debug regular expressions in real-time.",
+      "date": "2026-04-14",
       "tags": [
-        "Regex Tester"
+        "Regex",
+        "DevTools"
       ],
       "readTime": "5 min",
       "url": "/blog/regex-tester.html",
@@ -40,15 +43,54 @@
     {
       "slug": "color-converter",
       "title": "Color Converter: HEX, RGB, HSL Online Free Tool",
-      "description": "Convert colors between HEX, RGB, HSL, and CMYK formats instantly. Free online color converter with live preview and copy-to-clipboard.",
-      "date": "2026-04-15",
+      "description": "Convert colors between HEX, RGB, HSL, and HSB formats instantly.",
+      "date": "2026-04-14",
       "tags": [
-        "Color Converter"
+        "Color",
+        "CSS"
       ],
       "readTime": "5 min",
       "url": "/blog/color-converter.html",
       "tool": "Color Converter"
+    },
+    {
+      "slug": "unix-timestamp-converter",
+      "title": "How to Convert Unix Timestamps to Human-Readable Dates",
+      "description": "Understand Unix timestamps and convert them across JavaScript, Python, PHP, and Go.",
+      "date": "2026-04-10",
+      "tags": [
+        "Timestamp",
+        "Date"
+      ],
+      "readTime": "7 min",
+      "url": "/blog/unix-timestamp-converter.html",
+      "tool": "Timestamp Converter"
+    },
+    {
+      "slug": "base64-encode-decode",
+      "title": "Base64 Encode/Decode in JavaScript: The Complete Guide",
+      "description": "Everything you need to know about Base64 encoding in JavaScript.",
+      "date": "2026-04-09",
+      "tags": [
+        "Base64",
+        "Encoding"
+      ],
+      "readTime": "10 min",
+      "url": "/blog/base64-encode-decode.html",
+      "tool": "Base64 Encoder/Decoder"
+    },
+    {
+      "slug": "json-formatter-online",
+      "title": "How to Format and Validate JSON Online in 2026",
+      "description": "Learn the fastest ways to format, validate, and debug JSON data in your browser.",
+      "date": "2026-04-08",
+      "tags": [
+        "JSON",
+        "Formatter"
+      ],
+      "readTime": "8 min",
+      "url": "/blog/json-formatter-online.html",
+      "tool": "JSON Formatter"
     }
-  ],
-  "lastUpdated": "2026-04-15T19:37:38.262728"
+  ]
 }
