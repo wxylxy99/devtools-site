@@ -908,11 +908,21 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
+    <!-- Tool Categories -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="btn btn-primary" onclick="filterCategory('all')" data-category-btn="all" style="padding:6px 14px;font-size:13px;">All</button>
+      <button class="btn" onclick="filterCategory('encode')" data-category-btn="encode" style="padding:6px 14px;font-size:13px;">🔑 编码/解码</button>
+      <button class="btn" onclick="filterCategory('format')" data-category-btn="format" style="padding:6px 14px;font-size:13px;">📐 格式化</button>
+      <button class="btn" onclick="filterCategory('convert')" data-category-btn="convert" style="padding:6px 14px;font-size:13px;">🔄 转换</button>
+      <button class="btn" onclick="filterCategory('test')" data-category-btn="test" style="padding:6px 14px;font-size:13px;">🧪 测试</button>
+      <button class="btn" onclick="filterCategory('generate')" data-category-btn="generate" style="padding:6px 14px;font-size:13px;">✨ 生成</button>
+    </div>
+
     <!-- Tool Cards - Bento Grid -->
-    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count">13 tools</span></p>
+    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count" id="toolCount">13 tools</span></p>
     <div class="bento-tools" id="toolCards">
 
-      <div class="tool-card" onclick="openTool('json')" data-tool="json">
+      <div class="tool-card" onclick="openTool('json')" data-tool="json" data-category="format">
         <div class="tool-card-icon">
           <svg><use href="#icon-json"/></svg>
         </div>
@@ -921,7 +931,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag" data-i18n="t_json_tag">Popular</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('base64')" data-tool="base64">
+      <div class="tool-card" onclick="openTool('base64')" data-tool="base64" data-category="encode">
         <div class="tool-card-icon">
           <svg><use href="#icon-code"/></svg>
         </div>
@@ -930,7 +940,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag" data-i18n="t_b64_tag">Common</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('timestamp')" data-tool="timestamp">
+      <div class="tool-card" onclick="openTool('timestamp')" data-tool="timestamp" data-category="convert">
         <div class="tool-card-icon">
           <svg><use href="#icon-clock"/></svg>
         </div>
@@ -939,7 +949,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag" data-i18n="t_ts_tag">Essential</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('color')" data-tool="color">
+      <div class="tool-card" onclick="openTool('color')" data-tool="color" data-category="convert">
         <div class="tool-card-icon">
           <svg><use href="#icon-palette"/></svg>
         </div>
@@ -948,7 +958,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag" data-i18n="t_color_tag">Visual</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('regex')" data-tool="regex">
+      <div class="tool-card" onclick="openTool('regex')" data-tool="regex" data-category="test">
         <div class="tool-card-icon">
           <svg><use href="#icon-regex"/></svg>
         </div>
@@ -957,7 +967,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag" data-i18n="t_regex_tag">Advanced</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('url')" data-tool="url">
+      <div class="tool-card" onclick="openTool('url')" data-tool="url" data-category="encode">
         <div class="tool-card-icon">
           <svg><use href="#icon-link"/></svg>
         </div>
@@ -967,7 +977,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       </div>
 
       
-      <div class="tool-card" onclick="openTool('jwt')" data-tool="jwt">
+      <div class="tool-card" onclick="openTool('jwt')" data-tool="jwt" data-category="encode">
         <div class="tool-card-icon">
           <svg><use href="#icon-key"/></svg>
         </div>
@@ -976,7 +986,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag">Security</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('markdown')" data-tool="markdown">
+      <div class="tool-card" onclick="openTool('markdown')" data-tool="markdown" data-category="format">
         <div class="tool-card-icon">
           <svg><use href="#icon-md"/></svg>
         </div>
@@ -985,7 +995,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag">Writing</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('uuid')" data-tool="uuid">
+      <div class="tool-card" onclick="openTool('uuid')" data-tool="uuid" data-category="generate">
         <div class="tool-card-icon">
           <svg><use href="#icon-uuid"/></svg>
         </div>
@@ -994,7 +1004,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag">Generator</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('css')" data-tool="css">
+      <div class="tool-card" onclick="openTool('css')" data-tool="css" data-category="format">
         <div class="tool-card-icon">
           <svg><use href="#icon-css"/></svg>
         </div>
@@ -1003,7 +1013,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag">Formatter</span>
       </div>
 
-      <div class="tool-card" onclick="openTool('sql')" data-tool="sql">
+      <div class="tool-card" onclick="openTool('sql')" data-tool="sql" data-category="format">
         <div class="tool-card-icon">
           <svg><use href="#icon-sql"/></svg>
         </div>
@@ -1063,6 +1073,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
       <div class="btn-group">
         <button class="btn btn-primary" onclick="jsonFormat()" data-i18n="ws_format">Format</button>
         <button class="btn" onclick="jsonMinify()" data-i18n="ws_minify">Minify</button>
+        <button class="btn" onclick="jsonValidate()">Validate</button>
         <button class="btn" onclick="jsonClear()" data-i18n="ws_clear">Clear</button>
       </div>
       <div class="status-bar" id="jsonStatus">
@@ -1197,6 +1208,22 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
           <label data-i18n="ws_flags">Flags</label>
           <input type="text" id="regexFlags" value="g" placeholder="e.g. gi" oninput="regexTest()">
         </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label>Common Patterns</label>
+        <select id="regexPresets" onchange="regexLoadPreset()" style="padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:14px;width:100%;">
+          <option value="">— Select a common pattern —</option>
+          <option value="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$|g">Email Address</option>
+          <option value="https?://[^\s]+|g">URL</option>
+          <option value="\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b|g">IPv4 Address</option>
+          <option value="#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})|g">HEX Color</option>
+          <option value="\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b|gi">UUID</option>
+          <option value="^[a-zA-Z_][a-zA-Z0-9_]*$|g">Variable Name</option>
+          <option value="\b\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b|g">Date (YYYY-MM-DD)</option>
+          <option value>"[^"]*"|g">Quoted Strings</option>
+          <option value>\b(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|JOIN)\b|gi">SQL Keywords</option>
+          <option value>^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$|g">Password (8+ chars, upper+lower+digit)</option>
+        </select>
       </div>
       <div style="margin-bottom: 12px;">
         <label data-i18n="ws_test_string">Test String</label>
@@ -1481,6 +1508,32 @@ function toggleTheme() {
 })();
 
 // ========== Search/Filter ==========
+
+function filterCategory(cat) {
+  const cards = document.querySelectorAll('.tool-card');
+  let visible = 0;
+  cards.forEach(function(card) {
+    const toolCat = card.getAttribute('data-category');
+    if (!toolCat) return; // skip external links
+    if (cat === 'all' || toolCat === cat) {
+      card.style.display = '';
+      visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  // Update button styles
+  document.querySelectorAll('[data-category-btn]').forEach(function(btn) {
+    if (btn.getAttribute('data-category-btn') === cat) {
+      btn.classList.add('btn-primary');
+    } else {
+      btn.classList.remove('btn-primary');
+    }
+  });
+  // Update count
+  var countEl = document.getElementById('toolCount');
+  if (countEl) countEl.textContent = visible + ' tools';
+}
 function filterTools() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const cards = document.querySelectorAll('.tool-card');
@@ -1823,9 +1876,46 @@ function jsonFormat() {
     var obj = JSON.parse(input);
     var output = JSON.stringify(obj, null, 2);
     document.getElementById('jsonOutput').value = output;
-    status.innerHTML = '<span class="status-ok">&#10003; Valid JSON</span><span>' + input.length + ' chars &rarr; ' + output.length + ' chars</span>';
+    var keys = 0, depth = 0;
+    JSON.stringify(obj, function(k, v) { keys++; return v; });
+    function getMaxDepth(o, d) { if (typeof o !== 'object' || o === null) return d; var m = d; for (var k in o) { var sub = getMaxDepth(o[k], d+1); if (sub > m) m = sub; } return m; }
+    depth = getMaxDepth(obj, 0);
+    status.innerHTML = '<span class="status-ok">&#10003; Valid JSON</span><span>' + input.length + ' → ' + output.length + ' chars · ' + keys + ' keys · depth ' + depth + '</span>';
   } catch (e) {
-    status.innerHTML = '<span class="status-err">Error: ' + e.message + '</span>';
+    // Try to find line/column of error
+    var posMatch = e.message.match(/position\s+(\d+)/i);
+    var errMsg = 'Error: ' + e.message;
+    if (posMatch) {
+      var pos = parseInt(posMatch[1]);
+      var lines = input.substring(0, pos).split('\n');
+      var line = lines.length;
+      var col = lines[lines.length-1].length + 1;
+      errMsg = 'Error at line ' + line + ', column ' + col + ': ' + e.message;
+      // Highlight the error line in output
+      document.getElementById('jsonOutput').value = '⚠️ ' + errMsg + '\n\nProblem area (around line ' + line + '):\n' + input.split('\n').map(function(l, i) { return (i === line-1 ? '>>> ' : '    ') + (i+1) + '| ' + l; }).join('\n');
+    }
+    status.innerHTML = '<span class="status-err">' + errMsg + '</span>';
+  }
+}
+
+function jsonValidate() {
+  var input = document.getElementById('jsonInput').value;
+  var status = document.getElementById('jsonStatus');
+  if (!input.trim()) { status.innerHTML = '<span>No input</span>'; return; }
+  try {
+    var obj = JSON.parse(input);
+    var issues = [];
+    // Check common issues
+    var raw = JSON.stringify(obj);
+    if (raw.includes('null')) issues.push('Contains null values');
+    if (/\\d{10,13}/.test(raw)) issues.push('Possible timestamp detected');
+    var depth = 0;
+    function checkDepth(o, d) { if (typeof o !== 'object' || o === null) { if (d > 10) issues.push('Very deep nesting ('+d+' levels)'); return; } for (var k in o) checkDepth(o[k], d+1); }
+    checkDepth(obj, 0);
+    var warnStr = issues.length ? ' · ⚠️ ' + issues.join('; ') : '';
+    status.innerHTML = '<span class="status-ok">&#10003; Valid JSON</span><span>Type: ' + (Array.isArray(obj) ? 'Array['+obj.length+']' : typeof obj) + ' · Size: ' + raw.length + ' bytes' + warnStr + '</span>';
+  } catch (e) {
+    status.innerHTML = '<span class="status-err">❌ ' + e.message + '</span>';
   }
 }
 
@@ -2028,6 +2118,15 @@ function colorFromHSL() {
 }
 
 // ========== Regex Tester ==========
+function regexLoadPreset() {
+  var val = document.getElementById('regexPresets').value;
+  if (!val) return;
+  var parts = val.split('|');
+  document.getElementById('regexPattern').value = parts[0];
+  document.getElementById('regexFlags').value = parts[1] || 'g';
+  regexTest();
+}
+
 function regexTest() {
   var pattern = document.getElementById('regexPattern').value;
   var flags = document.getElementById('regexFlags').value;
