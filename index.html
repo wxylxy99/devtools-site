@@ -1510,83 +1510,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-
-<script>
-// ========== Theme Toggle ==========
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.classList.contains('dark');
-  if (isDark) {
-    html.classList.remove('dark');
-    html.classList.add('light');
-    localStorage.setItem('theme', 'light');
-  } else {
-    html.classList.remove('light');
-    html.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-  }
-}
-
-// Apply saved theme on load
-(function() {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'light' || saved === 'dark') {
-    document.documentElement.classList.remove('dark', 'light');
-    document.documentElement.classList.add(saved);
-  }
-})();
-
-// ========== Search/Filter ==========
-
-
-// Initialize: show all tools and set correct count on page load
-(function() {
-  var allCards = document.querySelectorAll('.tool-card[data-category]');
-  var countEl = document.getElementById('toolCount');
-  if (countEl) countEl.textContent = allCards.length + ' tools';
-})();
-function filterCategory(cat) {
-  const cards = document.querySelectorAll('.tool-card');
-  let visible = 0;
-  cards.forEach(function(card) {
-    const toolCat = card.getAttribute('data-category');
-    if (!toolCat) return; // skip external links
-    if (cat === 'all' || toolCat === cat) {
-      card.style.display = '';
-      visible++;
-    } else {
-      card.style.display = 'none';
-    }
-  });
-  // Update button styles
-  document.querySelectorAll('[data-category-btn]').forEach(function(btn) {
-    if (btn.getAttribute('data-category-btn') === cat) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-  // Update count
-  var countEl = document.getElementById('toolCount');
-  if (countEl) countEl.textContent = visible + ' tools';
-}
-function filterTools() {
-  const query = document.getElementById('searchInput').value.toLowerCase();
-  const cards = document.querySelectorAll('.tool-card');
-  cards.forEach(function(card) {
-    const tool = card.getAttribute('data-tool');
-    const name = card.querySelector('h3').textContent.toLowerCase();
-    const desc = card.querySelector('p').textContent.toLowerCase();
-    if (name.includes(query) || desc.includes(query) || tool.includes(query)) {
-      card.style.display = '';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
-
-// ========== Navigation ==========
-
     <!-- JWT Decoder -->
     <div class="workspace" id="tool-jwt">
       <div class="workspace-header">
@@ -1720,6 +1643,84 @@ function filterTools() {
       </div>
       <div class="status-bar" id="sqlStatus"><span>Ready</span></div>
     </div>
+
+
+
+<script>
+// ========== Theme Toggle ==========
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.classList.contains('dark');
+  if (isDark) {
+    html.classList.remove('dark');
+    html.classList.add('light');
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.classList.remove('light');
+    html.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+// Apply saved theme on load
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light' || saved === 'dark') {
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(saved);
+  }
+})();
+
+// ========== Search/Filter ==========
+
+
+// Initialize: show all tools and set correct count on page load
+(function() {
+  var allCards = document.querySelectorAll('.tool-card[data-category]');
+  var countEl = document.getElementById('toolCount');
+  if (countEl) countEl.textContent = allCards.length + ' tools';
+})();
+function filterCategory(cat) {
+  const cards = document.querySelectorAll('.tool-card');
+  let visible = 0;
+  cards.forEach(function(card) {
+    const toolCat = card.getAttribute('data-category');
+    if (!toolCat) return; // skip external links
+    if (cat === 'all' || toolCat === cat) {
+      card.style.display = '';
+      visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  // Update button styles
+  document.querySelectorAll('[data-category-btn]').forEach(function(btn) {
+    if (btn.getAttribute('data-category-btn') === cat) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  // Update count
+  var countEl = document.getElementById('toolCount');
+  if (countEl) countEl.textContent = visible + ' tools';
+}
+function filterTools() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const cards = document.querySelectorAll('.tool-card');
+  cards.forEach(function(card) {
+    const tool = card.getAttribute('data-tool');
+    const name = card.querySelector('h3').textContent.toLowerCase();
+    const desc = card.querySelector('p').textContent.toLowerCase();
+    if (name.includes(query) || desc.includes(query) || tool.includes(query)) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// ========== Navigation ==========
 
 
 // ========== JWT Decoder ==========
