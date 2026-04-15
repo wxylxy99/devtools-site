@@ -1,0 +1,1351 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hermes Agent 子 Agent 协作 — 多 Agent 并行处理复杂任务</title>
+    <meta
+      name="description"
+      content="Hermes Agent 子 Agent 协作完全指南：深入解析 delegate_task 工具、三种协作模式（串行/并行/层级）、MCP 服务器作为 Agent、跨平台委托及常见陷阱与最佳实践。"
+    />
+    <meta name="theme-color" content="#0A0E1A" />
+
+    <meta property="og:title" content="Hermes Agent 子 Agent 协作" />
+    <meta
+      property="og:description"
+      content="多 Agent 并行处理复杂任务完全指南，2500+ 字详解。"
+    />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-primary: #0A0E1A;
+        --bg-secondary: #111827;
+        --bg-card: #1a2035;
+        --text-primary: #f0f4ff;
+        --text-secondary: #94a3b8;
+        --accent: #6366f1;
+        --accent-light: #818cf8;
+        --accent-glow: rgba(99, 102, 241, 0.3);
+        --border: rgba(255, 255, 255, 0.08);
+        --code-bg: #0d1117;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --error: #ef4444;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.7;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      header {
+        text-align: center;
+        padding: 4rem 0 3rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 3rem;
+      }
+
+      .badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.25rem;
+      }
+
+      h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+      }
+
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .meta {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      .meta-item svg {
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
+      }
+
+      .toc {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.75rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .toc h2 {
+        font-size: 1.1rem;
+        font-weight:600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .toc ol {
+        padding-left: 1.25rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .toc ol li {
+        margin-bottom: 0.5rem;
+      }
+
+      .toc ol li a {
+        color: var(--accent-light);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .toc ol li a:hover {
+        color: var(--accent);
+        text-decoration: underline;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 3rem 0 1.25rem;
+        color: var(--text-primary);
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+      }
+
+      h2:first-of-type {
+        margin-top: 2rem;
+        border-top: none;
+        padding-top: 0;
+      }
+
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 2rem 0 0.85rem;
+        color: var(--accent-light);
+      }
+
+      p {
+        color: var(--text-secondary);
+        margin-bottom: 1.15rem;
+        font-size: 1rem;
+      }
+
+      strong {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .lead {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        border-left: 3px solid var(--accent);
+        padding-left: 1.25rem;
+        margin: 1.75rem 0 2rem;
+      }
+
+      .diagram {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        overflow-x: auto;
+        white-space: pre;
+        line-height: 1.6;
+      }
+
+      .diagram .label {
+        color: var(--accent-light);
+        font-weight: 500;
+      }
+
+      .diagram .arrow {
+        color: var(--success);
+      }
+
+      .diagram .comment {
+        color: #6b7280;
+      }
+
+      code {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875em;
+        background: var(--code-bg);
+        color: var(--accent-light);
+        padding: 0.15em 0.45em;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+      }
+
+      pre {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        position: relative;
+      }
+
+      pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        line-height: 1.7;
+      }
+
+      .filename {
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      .info-box {
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.25);
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .info-box.warning {
+        background: rgba(245, 158, 11, 0.08);
+        border-color: rgba(245, 158, 11, 0.25);
+      }
+
+      .info-box.error {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.25);
+      }
+
+      .info-box.success {
+        background: rgba(34, 197, 94, 0.08);
+        border-color: rgba(34, 197, 94, 0.25);
+      }
+
+      .info-box p {
+        margin-bottom: 0;
+        font-size: 0.925rem;
+      }
+
+      .info-box strong {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-size: 0.875rem;
+      }
+
+      ul, ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1.25rem;
+        color: var(--text-secondary);
+      }
+
+      ul li, ol li {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      ul li::marker {
+        color: var(--accent);
+      }
+
+      ol li::marker {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .pattern-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.25rem;
+        margin: 1.75rem 0;
+      }
+
+      .pattern-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.5rem;
+      }
+
+      .pattern-card h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+        color: var(--accent-light);
+      }
+
+      .pattern-card p {
+        font-size: 0.875rem;
+        margin-bottom: 0;
+      }
+
+      .pattern-card code {
+        font-size: 0.8em;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin: 1.5rem 0;
+      }
+
+      @media (max-width: 640px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+        h1 { font-size: 1.75rem; }
+        .container { padding: 1.25rem 1rem; }
+      }
+
+      footer {
+        text-align: center;
+        padding: 3rem 0 2rem;
+        border-top: 1px solid var(--border);
+        margin-top: 4rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      footer a {
+        color: var(--accent-light);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <span class="badge">教程系列</span>
+        <h1>Hermes Agent 子 Agent 协作</h1>
+        <p class="subtitle">多 Agent 并行处理复杂任务 — 深入解析 delegate_task、三种协作模式、MCP Server as Agent 及跨平台委托</p>
+        <div class="meta">
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            约 25 分钟阅读
+          </span>
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            高级特性
+          </span>
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            代码示例
+          </span>
+        </div>
+      </header>
+
+      <nav class="toc">
+        <h2>目录导航</h2>
+        <ol>
+          <li><a href="#intro">为什么需要子 Agent 协作？</a></li>
+          <li><a href="#delegate-task">核心工具：delegate_task</a></li>
+          <li><a href="#sequential">协作模式一：串行（Sequential）</a></li>
+          <li><a href="#parallel">协作模式二：并行（Parallel）</a></li>
+          <li><a href="#hierarchical">协作模式三：层级（Hierarchical）</a></li>
+          <li><a href="#mcp-as-agent">MCP Server 作为 Agent</a></li>
+          <li><a href="#cross-platform">跨平台委托</a></li>
+          <li><a href="#pitfalls">常见陷阱与规避</a></li>
+          <li><a href="#best-practices">最佳实践总结</a></li>
+          <li><a href="#summary">总结</a></li>
+        </ol>
+      </nav>
+
+      <main>
+        <h2 id="intro">为什么需要子 Agent 协作？</h2>
+
+        <p class="lead">当一个复杂任务超出单个 Agent 的能力边界时，最优雅的解法不是让一个 Agent 变成"全能冠军"，而是将任务分解交给多个专业化的小 Agent，让它们各司其职、协同作战。</p>
+
+        <p>Hermes Agent 的设计哲学是<strong>简洁而强大</strong>。单个 Agent 可以完成很多事，但在面对以下场景时，单 Agent 的局限性就暴露出来了：</p>
+
+        <ul>
+          <li><strong>多领域交叉任务</strong>：一个任务既需要写代码，又需要查文档，还要生成报告，单个 Agent 频繁切换上下文成本极高。</li>
+          <li><strong>大规模并行处理</strong>：需要同时从 10 个不同数据源获取数据并汇总，单 Agent 串行请求耗时数小时。</li>
+          <li><strong>复杂决策树</strong>：先分析数据，再根据分析结果调用不同工具，最后整合输出——这种条件分支逻辑让单个 Agent 的 prompt 变得臃肿且难以维护。</li>
+          <li><strong>专业能力复用</strong>：某个特定领域的处理逻辑（如 SQL 查询优化、图片处理）已经封装为独立 Agent，希望在多个场景中复用。</li>
+        </ul>
+
+        <p>子 Agent 协作正是为了解决这些问题而生。通过 <code>delegate_task</code> 工具，主 Agent 可以将任务委托给子 Agent，形成一个<strong>可组合、可扩展、可维护</strong>的多 Agent 系统。</p>
+
+        <h2 id="delegate-task">核心工具：delegate_task</h2>
+
+        <p><code>delegate_task</code> 是 Hermes Agent 中实现子 Agent 协作的核心工具。它的设计理念非常清晰：<strong>主 Agent 保持对任务流的控制权，子 Agent 负责具体执行</strong>。这避免了去中心化带来的混乱，也让主 Agent 能够汇总结果、统一输出。</p>
+
+        <h3>工具签名</h3>
+
+        <div class="diagram">delegate_task(
+  task: string,          // 委托描述（自然语言）
+  agent_id?: string,     // 指定 Agent ID（可选）
+  agent_type?: string,   // 指定 Agent 类型（可选）
+  context?: object,      // 传递的上下文数据
+  wait?: number,         // 等待超时（秒），默认 300
+  tools?: string[]       // 允许子 Agent 使用的工具列表
+) -&gt; TaskResult</div>
+
+        <h3>TaskResult 返回结构</h3>
+
+        <pre><code>interface TaskResult {
+  task_id: string;       // 任务唯一标识
+  status: "success" | "partial" | "failed";
+  result: any;           // 子 Agent 返回的结果
+  metadata: {
+    agent_id: string;
+    duration_ms: number;
+    tools_used: string[];
+    tokens_used?: number;
+  };
+}</code></pre>
+
+        <h3>最简单的委托调用</h3>
+
+        <pre><code>// 主 Agent 中最简单的子 Agent 委托
+const result = await delegate_task({
+  task: "帮我查询今天北京的天气，输出温度和空气质量",
+  agent_type: "research",
+  context: { user_id: "u123" }
+});
+
+console.log(result.result);
+// {
+//   temperature: "28°C",
+//   aqi: 85,
+//   condition: "多云"
+// }</code></pre>
+
+        <p>就这么简单。一行 <code>delegate_task</code> 调用，主 Agent 就能把天气查询任务交给专业的 research 子 Agent，自己继续处理其他事情，或者等待结果后继续下一步。</p>
+
+        <h3>等待策略：同步 vs 异步</h3>
+
+        <p>默认情况下，<code>delegate_task</code> 是<strong>同步阻塞</strong>的——主 Agent 会等待子 Agent 完成并返回结果后才继续。对于需要快速响应的场景，这是最安全的选择。</p>
+
+        <div class="info-box">
+          <p><strong>异步委托</strong>：将 <code>wait</code> 设为 <code>0</code>，主 Agent 立即返回一个 <code>task_id</code>，随后通过 <code>get_task_result(task_id)</code> 查询状态。这在需要同时启动多个子 Agent 时非常有用。</p>
+        </div>
+
+        <pre><code>// 异步委托：立即返回 task_id，不等待结果
+const { task_id } = await delegate_task({
+  task: "分析过去一年的股票K线数据",
+  agent_type: "data-analysis",
+  wait: 0  // 异步模式
+});
+
+// 主 Agent 可以继续做其他事，稍后查询
+const result = await get_task_result(task_id);
+console.log(result.status); // "success" | "running" | "failed"</code></pre>
+
+        <h2 id="sequential">协作模式一：串行（Sequential）</h2>
+
+        <p>串行模式是最直观的协作方式：<strong>任务按严格的先后顺序执行，前一个的输出作为后一个的输入</strong>。这就像一条流水线，每个工位只做一件事，做完交给下一个。</p>
+
+        <h3>典型场景</h3>
+        <ul>
+          <li>数据 ETL：抓取 → 清洗 → 转换 → 加载</li>
+          <li>内容创作：选题 → 撰写 → 审核 → 发布</li>
+          <li>代码开发：需求分析 → 架构设计 → 编码 → 测试</li>
+        </ul>
+
+        <h3>代码示例：自动化技术报告生成</h3>
+
+        <pre><code>// 场景：自动生成某技术主题的深度报告
+// 流程：搜索资料 -&gt; 总结要点 -&gt; 撰写报告 -&gt; 生成摘要
+
+async function generateTechReport(topic: string) {
+  // 第一步：researcher Agent 搜集资料
+  const researchResult = await delegate_task({
+    task: `搜索并整理关于 "${topic}" 的最新技术资料，包括：
+      1. 核心概念和原理
+      2. 当前主流技术方案
+      3. 业界最新动态和趋势
+      4. 典型应用场景
+    请输出结构化的 JSON 格式。`,
+    agent_type: "researcher",
+    tools: ["web_search", "read_file"],
+    context: { topic, depth: "advanced" }
+  });
+
+  if (researchResult.status !== "success") {
+    throw new Error(`资料搜集失败: ${researchResult.result}`);
+  }
+
+  // 第二步：summarizer Agent 提炼要点
+  const summaryResult = await delegate_task({
+    task: `根据以下资料，提炼出 5-8 个核心要点，每个要点包含：
+      - 标题（一句话概括）
+      - 详细说明（200字以内）
+      - 引用来源
+    输入资料：${JSON.stringify(researchResult.result)}`,
+    agent_type: "summarizer",
+    context: { max_points: 8 }
+  });
+
+  // 第三步：writer Agent 撰写完整报告
+  const reportResult = await delegate_task({
+    task: `根据以下要点，撰写一篇 3000 字左右的技术报告：
+      主题：${topic}
+      核心要点：${JSON.stringify(summaryResult.result.points)}
+      要求：
+      - 结构清晰，包含引言、正文、结论
+      - 语言专业但通俗易懂
+      - 适当引用数据和研究来源`,
+    agent_type: "writer",
+    tools: ["write_file"],
+    context: {
+      format: "markdown",
+      word_count: 3000,
+      output_path: `/tmp/${topic}-report.md`
+    }
+  });
+
+  // 第四步：abstractor Agent 生成执行摘要
+  const abstractResult = await delegate_task({
+    task: `根据完整报告，生成一份 200 字以内的执行摘要，供决策者快速了解核心内容。
+    报告内容：前500字即可`,
+    agent_type: "abstractor",
+    context: { style: "executive" }
+  });
+
+  return {
+    report: reportResult.result,
+    summary: abstractResult.result,
+    metadata: {
+      topic,
+      generated_at: new Date().toISOString(),
+      stages: 4
+    }
+  };
+}</code></pre>
+
+        <h3>串行模式的优缺点</h3>
+
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <h4>优点</h4>
+            <p>逻辑清晰，易于调试；结果质量高，每个阶段充分处理；错误定位准确。</p>
+          </div>
+          <div class="pattern-card">
+            <h4>缺点</h4>
+            <p>总耗时 = 各阶段耗时之和，无并发加速；阶段间有依赖时无法打乱顺序。</p>
+          </div>
+        </div>
+
+        <h2 id="parallel">协作模式二：并行（Parallel）</h2>
+
+        <p>并行模式是提升效率的利器：<strong>多个子 Agent 同时工作，独立完成各自的任务，最后由主 Agent 汇总结果</strong>。这就像一个项目团队同时开多个工作流，最后合在一起。</p>
+
+        <h3>典型场景</h3>
+        <ul>
+          <li>多数据源并行采集：同时从 N 个 API/网站获取数据</li>
+          <li>多角度内容分析：一篇论文同时提取"创新点"、"方法论"、"局限性"</li>
+          <li>批量文件处理：同时处理 N 个文件的格式转换、审核、翻译</li>
+          <li>A/B 测试变体生成：同时生成多个设计方案供选择</li>
+        </ul>
+
+        <h3>代码示例：多源情报聚合</h3>
+
+        <pre><code>// 场景：用户查询"A公司最新财务状况"，需要同时查询多个信息源
+
+async function gatherCompanyIntel(company: string) {
+  // 使用 Promise.all 并行启动所有子 Agent
+  const [
+    newsResult,
+    financialResult,
+    socialResult,
+    regulatoryResult
+  ] = await Promise.all([
+    // 新闻动态
+    delegate_task({
+      task: `搜索并分析关于 "${company}" 最近三个月的新闻报道，
+        识别关键事件、战略动向和潜在风险信号。输出结构化摘要。`,
+      agent_type: "researcher",
+      tools: ["web_search"],
+      context: { time_range: "3months", source: "news" }
+    }),
+
+    // 财务数据
+    delegate_task({
+      task: `查找 "${company}" 最新的财务报告关键数据：
+        收入、利润、负债率、现金流、每股收益。
+        如无法获取直接数据，估算合理范围并标注置信度。`,
+      agent_type: "financial-analyst",
+      tools: ["web_search", "calculator"],
+      context: { fiscal_year: "latest" }
+    }),
+
+    // 社交舆情
+    delegate_task({
+      task: `分析 "${company}" 在社交媒体和投资社区的舆情：
+        网友主要关注什么？情绪倾向如何？有哪些争议话题？`,
+      agent_type: "sentiment-analyst",
+      tools: ["web_search"],
+      context: { platforms: ["twitter", "weibo", "xueqiu"] }
+    }),
+
+    // 监管动态
+    delegate_task({
+      task: `调查 "${company}" 所处行业的最新监管政策变化、
+        法律诉讼和合规问题。识别对企业有重大影响的信息。`,
+      agent_type: "regulatory-researcher",
+      tools: ["web_search", "read_file"],
+      context: { scope: "industry-wide" }
+    })
+  ]);
+
+  // 主 Agent 汇总所有子 Agent 结果
+  const finalReport = await delegate_task({
+    task: `你是一名专业的商业情报分析师。请根据以下四个信息源的调查结果，
+      生成一份关于 "${company}" 的综合情报报告。
+
+      信息源汇总：
+      - 新闻动态：${JSON.stringify(newsResult.result)}
+      - 财务数据：${JSON.stringify(financialResult.result)}
+      - 社交舆情：${JSON.stringify(socialResult.result)}
+      - 监管动态：${JSON.stringify(regulatoryResult.result)}
+
+      要求：
+      1. 识别跨信息源的一致信号和矛盾点
+      2. 给出综合风险评级（1-5分）
+      3. 为投资者提供明确的决策建议`,
+    agent_type: "analyst",
+    context: {
+      source_count: 4,
+      confidence_threshold: 0.7
+    }
+  });
+
+  return {
+    report: finalReport.result,
+    sources: {
+      news: newsResult.metadata,
+      financial: financialResult.metadata,
+      social: socialResult.metadata,
+      regulatory: regulatoryResult.metadata
+    },
+    query_time_ms: Date.now() - startTime
+  };
+}</code></pre>
+
+        <h3>带优先级的并行：fast-follow</h3>
+
+        <p>有时候我们希望在快速获得基本结果的同时，深入分析仍在后台继续。这时可以用 <code>wait: 0</code> 启动"慢速"任务，先返回"快速"结果：</p>
+
+        <pre><code>async function fastResearchWithDeepDive(topic: string) {
+  const startTime = Date.now();
+
+  // 快速结果：只搜前3条最重要的来源
+  const quickResult = await delegate_task({
+    task: `快速搜索 "${topic}"，返回最核心的 3 个事实点。
+      追求速度，忽略细节。`,
+    agent_type: "researcher",
+    wait: 30 // 只等30秒
+  });
+
+  // 后台深入：搜更多来源，做更全面分析
+  const deepTaskId = await delegate_task({
+    task: `深入研究 "${topic}"，涵盖学术论文、行业报告、案例分析。
+      输出详细的分析报告。`,
+    agent_type: "researcher",
+    wait: 0 // 异步，不阻塞
+  });
+
+  return {
+    quick_result: quickResult.result,
+    deep_task_id: deepTaskId.task_id, // 调用方稍后可用此 ID 查询
+    elapsed_ms: Date.now() - startTime
+  };
+}</code></pre>
+
+        <h3>并行模式的优缺点</h3>
+
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <h4>优点</h4>
+            <p>总耗时 ≈ 最慢子任务的耗时，效率最高；适合独立任务的批量处理；充分利用计算资源。</p>
+          </div>
+          <div class="pattern-card">
+            <h4>缺点</h4>
+            <p>结果汇总成本由主 Agent 承担；子任务间有依赖时不适用；资源竞争需要注意。</p>
+          </div>
+        </div>
+
+        <h2 id="hierarchical">协作模式三：层级（Hierarchical）</h2>
+
+        <p>层级模式是最复杂也最强大的协作方式：<strong>主 Agent 不直接执行任务，而是作为"管理者"将任务层层分解、指派给子 Manager Agent，再由子 Manager 分配给执行 Agent</strong>。这模拟了人类组织中的层级管理结构。</p>
+
+        <h3>典型场景</h3>
+        <ul>
+          <li>大型项目分解：战略层 → 项目层 → 执行层</li>
+          <li>多团队协同：总部 → 各地区分部 → 本地执行</li>
+          <li>复杂智能系统：规划 Agent → 协调 Agent → 专业 Agent</li>
+        </ul>
+
+        <h3>代码示例：智能客服路由系统</h3>
+
+        <pre><code>// 场景：一个智能客服系统处理用户咨询
+// L0: 协调层（主 Agent）-&gt; L1: 路由层（分类 Manager）-&gt; L2: 执行层（专业 Agent）
+
+// L2: 执行层 Agent 定义
+const EXECUTIVE_AGENTS = {
+  refund_agent: {
+    type: "refund-specialist",
+    description: "处理退款、退货、取消订单",
+    tools: ["query_order", "initiate_refund", "send_notification"]
+  },
+  tech_agent: {
+    type: "tech-support",
+    description: "处理技术问题、bug反馈、功能咨询",
+    tools: ["search_kb", "create_ticket", "escalate"]
+  },
+  sales_agent: {
+    type: "sales-consultant",
+    description: "产品推荐、价格咨询、促销政策",
+    tools: ["query_product", "apply_coupon", "create_order"]
+  },
+  billing_agent: {
+    type: "billing-specialist",
+    description: "账单问题、发票申请、支付异常",
+    tools: ["query_invoice", "check_payment", "resolve_dispute"]
+  }
+};
+
+// L1: 路由 Manager Agent
+async function routeCustomerInquiry(userMessage: string, userContext: object) {
+  const routingResult = await delegate_task({
+    task: `分析以下用户咨询内容，判断用户意图并选择最合适的处理 Agent。
+
+      用户消息：${userMessage}
+      用户历史：${JSON.stringify(userContext)}
+
+      可用 Agent：
+      - refund_agent: 退款退货取消
+      - tech_agent: 技术问题bug
+      - sales_agent: 购买咨询产品推荐
+      - billing_agent: 账单发票支付
+
+      请输出：
+      1. 意图分类（二级分类）
+      2. 置信度（0-1）
+      3. 是否需要升级人工
+      4. 建议的 Agent ID`,
+    agent_type: "router-manager",
+    context: { available_agents: Object.keys(EXECUTIVE_AGENTS) }
+  });
+
+  return {
+    intent: routingResult.result.intent,
+    confidence: routingResult.result.confidence,
+    agent_id: routingResult.result.agent_id,
+    escalate: routingResult.result.escalate
+  };
+}
+
+// L0: 主协调 Agent
+async function handleCustomerMessage(message: string, customerId: string) {
+  // 获取用户上下文（历史记录、会员等级等）
+  const userContext = await delegate_task({
+    task: `获取用户 ${customerId} 的完整上下文：
+      1. 历史咨询记录（最近5条）
+      2. 会员等级和账户状态
+      3. 最近订单状态`,
+    agent_type: "context-retriever",
+    tools: ["query_database"]
+  });
+
+  // L1 路由决策
+  const routing = await routeCustomerInquiry(message, userContext.result);
+
+  // 低置信度或明确升级请求 -&gt; 人工客服
+  if (routing.confidence < 0.7 || routing.escalate) {
+    return await delegate_task({
+      task: `将以下用户咨询转交人工客服处理：
+        用户：${customerId}
+        消息：${message}
+        分析结果：${JSON.stringify(routing)}
+        用户历史：${JSON.stringify(userContext.result)}`,
+      agent_type: "human-escalation",
+      tools: ["send_to_agent", "create_ticket"]
+    });
+  }
+
+  // L2 执行
+  const executionResult = await delegate_task({
+    task: `作为 ${routing.agent_id}，处理用户咨询：
+      用户消息：${message}
+      用户信息：${JSON.stringify(userContext.result)}
+      意图分类：${routing.intent}`,
+    agent_type: EXECUTIVE_AGENTS[routing.agent_id].type,
+    tools: EXECUTIVE_AGENTS[routing.agent_id].tools,
+    context: {
+      customer_id: customerId,
+      intent: routing.intent
+    }
+  });
+
+  // 响应后，主动检查用户满意度
+  if (executionResult.status === "success") {
+    await delegate_task({
+      task: `发送满意度调查，收集用户对本次服务 ${customerId} 的反馈`,
+      agent_type: "satisfaction-tracker",
+      tools: ["send_survey"]
+    });
+  }
+
+  return executionResult;
+}</code></pre>
+
+        <h3>层级模式的关键设计原则</h3>
+
+        <div class="info-box">
+          <p><strong>1. 每层职责单一化</strong><br/>L0 只做协调和汇总，L1 只做路由和分配，L2 只做具体执行。不要让中间层"越俎代庖"。</p>
+        </div>
+        <div class="info-box">
+          <p><strong>2. 信息逐层浓缩</strong><br/>每层向上汇报时，要对信息进行提炼和总结，而不是简单堆砌原始数据。</p>
+        </div>
+        <div class="info-box">
+          <p><strong>3. 清晰的升级路径</strong><br/>每一层都要定义明确的升级条件（如置信度低于阈值、用户明确要求、出现异常错误），让问题能顺畅地向上传递。</p>
+        </div>
+
+        <h3>层级模式的优缺点</h3>
+
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <h4>优点</h4>
+            <p>天然的可扩展性，加新 Agent 只需注册到路由层；职责分离，易于独立优化各层；适合大规模复杂系统。</p>
+          </div>
+          <div class="pattern-card">
+            <h4>缺点</h4>
+            <p>系统复杂度高，调试困难；延迟逐层累积；需要对整体架构有清晰的设计。</p>
+          </div>
+        </div>
+
+        <h2 id="mcp-as-agent">MCP Server 作为 Agent</h2>
+
+        <p>Model Context Protocol（MCP）服务器在 Hermes Agent 生态中不仅仅是"工具提供者"，它们本身就是<strong>可以充当 Agent 的轻量级推理单元</strong>。将 MCP Server 作为 Agent 使用，是扩展系统能力的一种高效方式。</p>
+
+        <h3>MCP Server as Agent 的优势</h3>
+
+        <ul>
+          <li><strong>开箱即用</strong>：很多 MCP Server 已经封装了完整的领域逻辑（如文件系统、数据库、Web API），无需从头训练。</li>
+          <li><strong>安全隔离</strong>：MCP Server 运行在独立进程中，出了错误不会影响主 Agent。</li>
+          <li><strong>可复用</strong>：同一个 MCP Server 可以被多个 Agent 同时调用。</li>
+          <li><strong>标准化接口</strong>：通过统一的 MCP 协议通信，无需关心实现细节。</li>
+        </ul>
+
+        <h3>代码示例：集成多个 MCP Server Agent</h3>
+
+        <pre><code>// 定义 MCP Server Agent 配置
+const mcpAgents = {
+  filesystem: {
+    server: "mcp-filesystem",
+    description: "文件系统操作：读、写、搜索文件",
+    capabilities: ["read", "write", "glob", "grep"]
+  },
+  database: {
+    server: "mcp-postgres",
+    description: "PostgreSQL 数据库查询和操作",
+    capabilities: ["query", "execute", "transaction"]
+  },
+  web: {
+    server: "mcp-playwright",
+    description: "浏览器自动化：抓取网页、填写表单、截图",
+    capabilities: ["navigate", "scrape", "screenshot", "fill_form"]
+  },
+  vectorstore: {
+    server: "mcp-qdrant",
+    description: "向量数据库：存储和检索嵌入向量",
+    capabilities: ["upsert", "search", "delete", "collection_info"]
+  }
+};
+
+// 使用 MCP Server Agent 构建 RAG 系统
+async function ragQuery(userQuestion: string, topK: number = 5) {
+  // Step 1: Web MCP Agent 搜索最新资料（补充知识库没有的内容）
+  const webSearchResult = await delegate_task({
+    task: `搜索关于 "${userQuestion}" 的最新网络资料，返回前3个最相关的 URL 和摘要。`,
+    agent_id: mcpAgents.web.server,
+    agent_type: "mcp-web-agent",
+    tools: ["navigate", "scrape"],
+    context: { max_results: 3 }
+  });
+
+  // Step 2: VectorStore MCP Agent 检索知识库
+  const vectorResult = await delegate_task({
+    task: `在知识库中检索与 "${userQuestion}" 最相关的 ${topK} 个文档块，返回文档内容和相关性分数。`,
+    agent_id: mcpAgents.vectorstore.server,
+    agent_type: "mcp-vector-agent",
+    tools: ["search"],
+    context: {
+      collection: "company-knowledge-base",
+      top_k: topK,
+      score_threshold: 0.7
+    }
+  });
+
+  // Step 3: Database MCP Agent 查询业务数据
+  const dbResult = await delegate_task({
+    task: `查询最近一个月内与 "${userQuestion}" 相关的业务数据统计。`,
+    agent_id: mcpAgents.database.server,
+    agent_type: "mcp-db-agent",
+    tools: ["query"],
+    context: {
+      sql: `SELECT * FROM business_metrics
+            WHERE metric_name LIKE '%${userQuestion}%'
+            AND created_at > NOW() - INTERVAL '30 days'` }
+  });
+
+  // Step 4: FileSystem MCP Agent 读取相关文档
+  const docsResult = await delegate_task({
+    task: `在 /docs 目录下搜索包含 "${userQuestion}" 的 Markdown 文件，返回文件内容和路径。`,
+    agent_id: mcpAgents.filesystem.server,
+    agent_type: "mcp-fs-agent",
+    tools: ["glob", "read"],
+    context: { pattern: "**/*.md" }
+  });
+
+  // Step 5: 主 Agent 汇总所有来源，生成最终答案
+  const finalAnswer = await delegate_task({
+    task: `基于以下四个信息源，回答用户问题："${userQuestion}"
+
+      1. 网络搜索结果：${JSON.stringify(webSearchResult.result)}
+      2. 知识库检索结果：${JSON.stringify(vectorResult.result)}
+      3. 业务数据库查询：${JSON.stringify(dbResult.result)}
+      4. 本地文档：${JSON.stringify(docsResult.result)}
+
+      要求：
+      - 综合所有来源给出完整答案
+      - 标注每个结论的信息来源
+      - 如信息冲突，说明各方观点`,
+    agent_type: "general-assistant"
+  });
+
+  return finalAnswer.result;
+}</code></pre>
+
+        <h3>让 MCP Server 支持 Task 委托</h3>
+
+        <p>要让一个 MCP Server 能够响应 <code>delegate_task</code>，需要在 Server 配置中声明 <code>supports_tasks: true</code>，并在 Server 内部实现任务队列和执行逻辑：</p>
+
+        <pre><code>// mcp-server configuration
+{
+  "server_name": "data-processor",
+  "server_type": "mcp",
+  "supports_tasks": true,        // 关键：声明支持任务委托
+  "task_queue_size": 10,
+  "capabilities": [
+    "data-cleaning",
+    "format-conversion",
+    "statistical-analysis"
+  ],
+  "execution": {
+    "timeout": 300,
+    "retry": 3,
+    "on_error": "rollback"
+  }
+}</code></pre>
+
+        <div class="info-box warning">
+          <p><strong>注意</strong>：不是所有 MCP Server 都支持任务委托。只有声明了 <code>supports_tasks: true</code> 的 Server 才能作为 Agent 被委托。未声明的 Server 只能通过工具调用（tool use）方式使用，无法获得独立的执行上下文和结果返回。</p>
+        </div>
+
+        <h2 id="cross-platform">跨平台委托</h2>
+
+        <p>Hermes Agent 的设计不局限于单一运行环境。<code>delegate_task</code> 支持<strong>跨平台委托</strong>，即主 Agent 可以将任务发送给运行在不同环境中的子 Agent——本地、其他服务器、甚至云端。</p>
+
+        <h3>跨平台委托的几种形态</h3>
+
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <h4>本地进程间委托</h4>
+            <p>主 Agent 与子 Agent 在同一台机器的不同进程中运行，通过共享文件系统或 Unix Socket 通信。</p>
+          </div>
+          <div class="pattern-card">
+            <h4>局域网委托</h4>
+            <p>子 Agent 部署在局域网内的其他服务器上，适合将重型任务（GPU 计算等）委托到专用服务器。</p>
+          </div>
+          <div class="pattern-card">
+            <h4>云端函数委托</h4>
+            <p>子 Agent 以 Cloudflare Workers、AWS Lambda 等无服务器函数形式运行，适合突发性、碎片化任务。</p>
+          </div>
+        </div>
+
+        <h3>代码示例：跨平台任务分发</h3>
+
+        <pre><code>// 定义不同平台的 Agent 端点
+const agentEndpoints = {
+  local: "http://localhost:7432",
+  gpuServer: "http://192.168.1.100:7432",
+  cloudWorker: "https://hermes-agent-abc.cloudfunctions.net"
+};
+
+// 根据任务特性选择合适的执行平台
+async function smartDelegate(task: Task) {
+  const platform = selectPlatform(task);
+
+  const result = await delegate_task({
+    task: task.description,
+    agent_id: task.agentId,
+    context: task.context,
+    // platform 参数指定执行位置
+    platform: {
+      type: platform.type,      // "local" | "remote" | "cloud"
+      endpoint: platform.url,
+      auth: platform.authToken  // 可选的认证令牌
+    }
+  });
+
+  return result;
+}
+
+function selectPlatform(task: Task): PlatformConfig {
+  // GPU 密集型任务 -&gt; GPU 服务器
+  if (task.requirements?.gpu || task.requirements?.model === "llama-70b") {
+    return {
+      type: "remote",
+      url: agentEndpoints.gpuServer,
+      authToken: process.env.GPU_SERVER_TOKEN
+    };
+  }
+
+  // 低延迟要求任务 -&gt; 本地
+  if (task.requirements?.maxLatency && task.requirements.maxLatency < 500) {
+    return {
+      type: "local",
+      url: agentEndpoints.local,
+      authToken: process.env.LOCAL_AGENT_TOKEN
+    };
+  }
+
+  // 后台批量任务 -&gt; 云端
+  return {
+    type: "cloud",
+    url: agentEndpoints.cloudWorker,
+    authToken: process.env.CLOUD_AUTH_TOKEN
+  };
+}
+
+// 跨平台文件处理示例
+async function processDocumentsAcrossPlatforms(documents: Document[]) {
+  const tasks = documents.map((doc, i) => ({
+    description: `处理文档 ${doc.filename}：提取关键信息并转换为 JSON`,
+    agentId: `doc-processor-${i}`,
+    context: { document },
+    requirements: {
+      // 大文档用 GPU 服务器，小文档本地处理
+      platform: doc.sizeMB > 10 ? "gpuServer" : "local"
+    }
+  }));
+
+  // 并行向不同平台分发任务
+  const results = await Promise.all(
+    tasks.map(t => smartDelegate(t))
+  );
+
+  return results;
+}</code></pre>
+
+        <h3>跨平台委托的挑战与应对</h3>
+
+        <ul>
+          <li><strong>网络延迟</strong>：跨网络委托增加通信开销，对延迟敏感的任务谨慎使用，或选择就近平台。</li>
+          <li><strong>数据序列化</strong>：不同平台间传递数据需注意格式兼容，建议使用 JSON 或 Protocol Buffers。</li>
+          <li><strong>认证与安全</strong>：跨平台调用必须携带认证令牌，建议使用 mTLS 或短期 JWT。</li>
+          <li><strong>故障转移</strong>：设计降级策略，当远程平台不可用时自动切换到其他平台。</li>
+        </ul>
+
+        <div class="info-box error">
+          <p><strong>安全提醒</strong>：跨平台委托涉及网络通信，务必：1）所有传输使用 TLS 加密；2）验证每个请求的来源和身份；3）不要在任务描述中传递敏感明文凭证；4）对返回结果进行 schema 校验，防止注入攻击。</p>
+        </div>
+
+        <h2 id="pitfalls">常见陷阱与规避</h2>
+
+        <p>子 Agent 协作虽然强大，但新手容易踩坑。以下是实际项目中总结的高频问题及其规避方法。</p>
+
+        <h3>陷阱一：过度委托（Over-delegation）</h3>
+
+        <p><strong>表现</strong>：主 Agent 把一个简单任务也拆成 5 个子 Agent 去执行，引入大量通信开销，反而比单 Agent 直接执行慢 10 倍。</p>
+
+        <pre><code>// ❌ 过度委托：杀鸡用牛刀
+async function badExample() {
+  const [a, b, c, d] = await Promise.all([
+    delegate_task({ task: "计算 1+1" }),
+    delegate_task({ task: "计算 2+2" }),
+    delegate_task({ task: "计算 3+3" }),
+    delegate_task({ task: "计算 4+4" }),
+  ]);
+  // 比直接 let sum = 2+4+6+8 慢太多了
+}
+
+// ✅ 适度委托：真正需要时才委托
+async function goodExample() {
+  // 确实需要多个专业领域知识时，才拆解任务
+  if (taskRequiresMultipleExpertise(task)) {
+    return await parallelDelegate(task);
+  }
+  // 单领域任务，单 Agent 搞定
+  return await singleAgentExecute(task);
+}</code></pre>
+
+        <div class="info-box">
+          <p><strong>经验法则</strong>：只有当任务能真正从专业化分工中获益时，才使用子 Agent。如果拆分后的每个子任务只需要通用能力就能完成，说明不需要委托。</p>
+        </div>
+
+        <h3>陷阱二：上下文信息丢失</h3>
+
+        <p><strong>表现</strong>：子 Agent 返回的结果在主 Agent 看来"莫名其妙"，因为传递给子 Agent 的 context 不完整，或者子 Agent 缺少关键背景信息。</p>
+
+        <pre><code>// ❌ 上下文丢失：只传了 task，没传 context
+const bad = await delegate_task({
+  task: "分析这份数据",
+  agent_type: "analyst"
+  // 缺少：data source, user background, expected output format
+});
+
+// ✅ 完整上下文：task + 充分的环境信息
+const good = await delegate_task({
+  task: "作为数据分析师，分析以下数据并给出建议",
+  agent_type: "analyst",
+  context: {
+    data: rawData,
+    user_background: "用户是一名电商运营，关注 GMV 增长",
+    expected_output: "具体的可执行建议，附带数据支撑",
+    constraints: "不要推荐付费工具",
+    previous_insights: previousAnalysis // 历史分析避免重复
+  }
+});</code></pre>
+
+        <h3>陷阱三：循环依赖（Circular Dependency）</h3>
+
+        <p><strong>表现</strong>：Agent A 委托给 Agent B，Agent B 又委托回 Agent A，形成死循环，耗尽资源。</p>
+
+        <div class="diagram">Agent A --delegate_task--&gt; Agent B
+Agent B --delegate_task--&gt; Agent A
+          (循环！)</div>
+
+        <pre><code>// ✅ 规避方法：在 context 中声明"禁止回委托给 A"
+await delegate_task({
+  task: "执行任务 X",
+  agent_id: "agent-b",
+  context: {
+    caller_id: "agent-a",  // 声明调用者身份
+    delegation_blacklist: ["agent-a"]  // 禁止回委托给 A
+  }
+});
+
+// B 的实现中检查：
+if (context.delegation_blacklist?.includes(context.caller_id)) {
+  throw new Error("安全策略：禁止循环委托");
+}</code></pre>
+
+        <h3>陷阱四：超时设置不当</h3>
+
+        <p><strong>表现</strong>：子 Agent 处理一个耗时的多步骤任务，但默认 300 秒超时太短，导致任务在关键步骤被强制中断。</p>
+
+        <div class="info-box warning">
+          <p><strong>超时设置建议</strong>：根据任务的真实复杂度设置超时。对于简单查询类任务，30-60 秒足够；对于涉及文件处理、数据分析等多步骤任务，可能需要 300 秒甚至更多；如果任务确实可能运行很久，使用 <code>wait: 0</code> 异步模式，设置一个合理的进度查询间隔。</p>
+        </div>
+
+        <h3>陷阱五：结果汇总时丢失关键信息</h3>
+
+        <p><strong>表现</strong>：并行委托了 10 个子 Agent，主 Agent 只关心"是否成功"，但忽略了部分成功（<code>status: "partial"</code>）的情况，导致最终结果不完整。</p>
+
+        <pre><code>// ❌ 只检查是否完全成功
+const results = await Promise.all(tasks.map(t => delegate_task(t)));
+// 10个任务中8个完全成功，2个部分成功，直接丢弃了部分成功的结果
+
+// ✅ 完整处理所有状态
+const results = await Promise.all(tasks.map(t => delegate_task(t)));
+
+for (const r of results) {
+  switch (r.status) {
+    case "success":
+      collectedData.push(r.result);
+      break;
+    case "partial":
+      // 部分成功也要收集可用部分
+      collectedData.push(r.result.available_part);
+      warnings.push({ task_id: r.task_id, issue: r.result.issue });
+      break;
+    case "failed":
+      // 失败记录但继续，不阻塞整体流程
+      errors.push({ task_id: r.task_id, reason: r.result });
+      break;
+  }
+}
+
+if (errors.length > 0) {
+  console.warn(`${errors.length} 个任务失败，需要人工介入检查`);
+}</code></pre>
+
+        <h3>陷阱六：忘记清理异步任务</h3>
+
+        <p><strong>表现</strong>：大量使用 <code>wait: 0</code> 异步委托后，产生了大量 orphaned tasks，这些任务在后台持续占用资源，但永远不会被查询结果。</p>
+
+        <pre><code>// ✅ 使用任务追踪器，确保所有异步任务都被管理
+const taskTracker = new TaskTracker({
+  maxConcurrent: 50,
+  cleanupAfter: 3600 // 完成后1小时自动清理
+});
+
+async function safeAsyncDelegate(taskDesc: string) {
+  const { task_id } = await delegate_task({
+    task: taskDesc,
+    wait: 0
+  });
+
+  taskTracker.register(task_id);  // 注册到追踪器
+  return task_id;
+}
+
+// 应用退出时等待所有任务完成
+process.on("SIGTERM", async () => {
+  await taskTracker.waitAll();
+  process.exit(0);
+});</code></pre>
+
+        <h2 id="best-practices">最佳实践总结</h2>
+
+        <h3>架构设计原则</h3>
+
+        <ol>
+          <li><strong>最小化委托深度</strong>：除非必要，尽量将层级控制在 2 层以内（主 Agent → 执行 Agent）。每多一层，就多一层延迟和复杂度。</li>
+          <li><strong>Agent 职责单一化</strong>：每个 Agent 最好只负责一个明确的专业领域。避免"全能型"Agent，它们往往什么都做但不精。</li>
+          <li><strong>显式而非隐式</strong>：在委托任务时，清晰地描述期望输出格式、约束条件和判断标准。不要让子 Agent 去"猜"你想要什么。</li>
+          <li><strong>幂等性设计</strong>：子 Agent 的关键操作应尽量设计为幂等的（多次执行结果一致），避免重复委托导致的副作用。</li>
+          <li><strong>优雅降级</strong>：当子 Agent 不可用时，系统应有降级方案，如使用更简单的算法、返回部分结果或切换到备用 Agent。</li>
+        </ol>
+
+        <h3>性能优化技巧</h3>
+
+        <ul>
+          <li><strong>预热子 Agent</strong>：对于延迟敏感的场景，在真正需要前预先启动子 Agent，减少冷启动延迟。</li>
+          <li><strong>批量委托</strong>：当有大量相似任务时，先在本地分组，再批量委托给子 Agent，减少通信次数。</li>
+          <li><strong>结果缓存</strong>：对于相同或相似任务，使用向量数据库缓存子 Agent 的输出结果，相似查询直接返回缓存。</li>
+          <li><strong>智能超时</strong>：根据任务类型动态调整超时，而不是统一使用默认 300 秒。</li>
+        </ul>
+
+        <h3>可观测性与调试</h3>
+
+        <pre><code>// 为每个委托添加追踪上下文，便于调试
+const traceId = generateUUID();
+
+await delegate_task({
+  task: taskDescription,
+  agent_type: agentType,
+  context: {
+    ...userContext,
+    trace_id: traceId,      // 关联整个调用链
+    span_id: generateUUID() // 当前 span 的唯一 ID
+  }
+});
+
+// 日志聚合：所有带 trace_id 的日志可以串联成完整的调用链
+logger.info({
+  event: "delegate_task",
+  trace_id: traceId,
+  agent_type: agentType,
+  task_duration_ms: result.metadata.duration_ms
+});</code></pre>
+
+        <h3>安全 Checklist</h3>
+
+        <ul>
+          <li>敏感数据脱敏后再传递给子 Agent</li>
+          <li>限制子 Agent 的工具权限（<code>tools</code> 参数）</li>
+          <li>对所有跨平台通信使用 TLS 加密</li>
+          <li>设置 <code>delegation_blacklist</code> 防止循环依赖</li>
+          <li>对返回结果进行 schema 校验</li>
+          <li>记录所有委托操作的完整审计日志</li>
+        </ul>
+
+        <h2 id="summary">总结</h2>
+
+        <p>Hermes Agent 的子 Agent 协作系统为构建复杂 AI 应用提供了一个灵活、高效且可扩展的框架。通过 <code>delegate_task</code> 这一核心工具，我们可以实现：</p>
+
+        <ul>
+          <li><strong>串行模式</strong>：适合有严格依赖链的流水线任务，每一步为下一步准备输入，质量优先。</li>
+          <li><strong>并行模式</strong>：适合独立任务的批量处理，通过并发大幅缩短总耗时。</li>
+          <li><strong>层级模式</strong>：适合大规模复杂系统，通过分层管理实现高度可扩展的架构。</li>
+        </ul>
+
+        <p>而 MCP Server 作为 Agent 的设计，进一步扩展了生态系统的边界，让现有的工具和服务可以无缝接入多 Agent 协作体系。跨平台委托则打破了物理限制，让计算资源可以按需动态分配。</p>
+
+        <p>最后，记住：<strong>协作是有成本的</strong>——通信延迟、上下文传递、结果汇总都需要代价。最强大的系统不是功能最多的，而是恰到好处地使用了协作模式的系统。从简单的需求出发，在真正需要的时候才引入更复杂的协作模式，才是可持续的架构之道。</p>
+
+        <div class="info-box success">
+          <p><strong>下一步推荐</strong>：在熟悉了基础协作模式后，可以探索"自适应协作"——让 Agent 根据任务复杂度动态选择最合适的协作模式，实现真正的智能任务分配。</p>
+        </div>
+      </main>
+
+      <footer>
+        <p>Hermes Agent 教程系列 · <a href="#">返回目录</a></p>
+      </footer>
+    </div>
+  </body>
+</html>
