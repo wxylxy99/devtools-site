@@ -286,96 +286,77 @@ footer {{ border-top:1px solid var(--border); padding:24px 0; text-align:center;
     return html
 
 
-def update_blog_index(posts):
-    """Rebuild blog/index.html with updated post list"""
-    posts_html = ""
-    for p in posts:
-        posts_html += f'''
-        <a href="{p['url']}" class="post-card">
-          <div class="post-date">{p['date']}</div>
-          <h3>{p['title']}</h3>
-          <p>{p['description']}</p>
-          <div class="post-tags">{" ".join(f'<span class="tag">{t}</span>' for t in p.get('tags', []))}</div>
-        </a>'''
+def update_blog_index():
+    """
+    Rebuild blog/index.html with all posts from _posts.json.
+    Fetches the current template, replaces the blog-grid section
+    with properly formatted blog-card HTML, and pushes back.
+    Returns (success: bool, message: str)
+    """
+    import urllib.request
 
-    html = f'''<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog - DevUtils | Free Developer Tools</title>
-<meta name="description" content="Developer tutorials and guides for JSON formatting, Base64 encoding, Unix timestamps, and more.">
-<meta property="og:title" content="Blog - DevUtils">
-<meta property="og:description" content="Developer tutorials and guides.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://devutils.uk/blog/">
-<link rel="canonical" href="https://devutils.uk/blog/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6731042234472710" crossorigin="anonymous"></script>
-<style>
-:root {{ --bg-primary:#0a0a0f; --bg-secondary:#12121a; --bg-tertiary:#1a1a25; --text-primary:#e4e4e7; --text-secondary:#a1a1aa; --text-muted:#71717a; --accent:#6366f1; --accent-hover:#818cf8; --border:#27272a; --card-bg:#16161d; }}
-* {{ margin:0; padding:0; box-sizing:border-box; }}
-body {{ font-family:'Inter',-apple-system,sans-serif; background:var(--bg-primary); color:var(--text-primary); line-height:1.6; min-height:100vh; }}
-a {{ color:var(--accent); text-decoration:none; }}
-a:hover {{ color:var(--accent-hover); }}
-.container {{ max-width:1200px; margin:0 auto; padding:0 24px; }}
-header {{ background:rgba(10,10,15,0.95); border-bottom:1px solid var(--border); padding:16px 0; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }}
-nav {{ display:flex; justify-content:space-between; align-items:center; }}
-.logo {{ font-size:20px; font-weight:700; color:#fff; text-decoration:none; font-family:'JetBrains Mono',monospace; }}
-.logo span {{ color:var(--accent); }}
-.nav-links {{ display:flex; gap:32px; list-style:none; }}
-.nav-links a {{ color:var(--text-secondary); text-decoration:none; font-size:14px; font-weight:500; transition:color 0.2s; }}
-.nav-links a:hover, .nav-links a.active {{ color:var(--text-primary); }}
-.nav-links a.active {{ color:var(--accent); }}
-.hero {{ padding:80px 0 60px; text-align:center; }}
-.hero h1 {{ font-size:48px; font-weight:700; margin-bottom:16px; }}
-.hero p {{ font-size:18px; color:var(--text-secondary); max-width:600px; margin:0 auto; }}
-.posts-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:20px; padding:40px 0; }}
-.post-card {{ background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:28px; transition:all 0.2s; display:block; text-decoration:none; }}
-.post-card:hover {{ border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,0.2); text-decoration:none; }}
-.post-date {{ font-size:12px; color:var(--text-muted); margin-bottom:10px; font-family:'JetBrains Mono',monospace; }}
-.post-card h3 {{ font-size:18px; font-weight:600; margin-bottom:10px; color:var(--text-primary); line-height:1.35; }}
-.post-card p {{ font-size:14px; color:var(--text-secondary); margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }}
-.post-tags {{ display:flex; gap:6px; flex-wrap:wrap; }}
-.tag {{ background:rgba(99,102,241,0.12); color:var(--accent); padding:3px 10px; border-radius:100px; font-size:11px; font-weight:500; }}
-footer {{ border-top:1px solid var(--border); padding:24px 0; text-align:center; font-size:13px; color:var(--text-muted); }}
-@media(max-width:640px){{ .container{{ padding:0 16px; }} .hero h1{{ font-size:32px; }} .posts-grid{{ grid-template-columns:1fr; }} }}
-</style>
-</head>
-<body>
-<header>
-  <div class="container">
-    <nav>
-      <a href="/" class="logo">DevUtils<span>.uk</span></a>
-      <ul class="nav-links">
-        <li><a href="/">Tools</a></li>
-        <li><a href="/tutorials">Tutorials</a></li>
-        <li><a href="/blog/" class="active">Blog</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
-<section class="hero">
-  <div class="container">
-    <h1>Blog</h1>
-    <p>Developer tutorials, tool guides, and best practices for modern web development.</p>
-  </div>
-</section>
-<section>
-  <div class="container">
-    <div class="posts-grid">
-{posts_html}
-    </div>
-  </div>
-</section>
-<footer>
-  <div class="container">© 2025 DevUtils.uk — Free Developer Tools</div>
-</footer>
-</body>
-</html>'''
-    return html
+    # Read _posts.json
+    posts_content = gh_api("blog/_posts.json")
+    if not posts_content or "content" not in posts_content:
+        return False, "Could not read _posts.json"
+
+    raw = posts_content["content"]
+    decoded = base64.b64decode(raw + "==").decode("utf-8")
+    posts_data = json.loads(decoded)
+    all_posts = posts_data.get("posts", [])
+
+    # Read current blog/index.html template
+    idx_data = gh_api("blog/index.html")
+    if not idx_data or "content" not in idx_data:
+        return False, "Could not read blog/index.html"
+
+    sha = idx_data.get("sha", "")
+    template = base64.b64decode(idx_data["content"] + "==").decode("utf-8")
+
+    # Difficulty to label map
+    dm = {
+        '初级': 'Guide', '中级': 'Tutorial', '高级': 'Advanced',
+        'Guide': 'Guide', 'Tutorial': 'Tutorial', 'Advanced': 'Advanced',
+        'Reference': 'Reference', 'reference': 'Reference'
+    }
+
+    def make_card(p):
+        slug = p['slug']
+        title = p['title']
+        desc = p.get('description', '')[:200]
+        rt = p.get('readTime', '5 min').replace(' min', '').replace('min', '').strip()
+        diff = p.get('difficulty', p.get('tags', ['Guide'])[0] if p.get('tags') else 'Guide')
+        label = dm.get(diff, 'Guide')
+        return (
+            f'<a href="/blog/{slug}.html" class="blog-card">\n'
+            f'                <div class="blog-card-meta">{label} · {rt} min read</div>\n'
+            f'                <h2>{title}</h2>\n'
+            f'                <p>{desc}</p>\n'
+            f'                <span class="read-more">Read more</span>\n'
+            f'            </a>'
+        )
+
+    cards_html = '\n\n'.join(make_card(p) for p in all_posts)
+
+    # Replace blog-grid section in template
+    gs = template.find('<div class="blog-grid">')
+    ge = template.find('</div>', gs) + 6
+    new_section = '<div class="blog-grid">\n' + cards_html + '\n            </div>'
+    new_html = template[:gs] + new_section + template[ge:]
+
+    # Push updated blog/index.html
+    content_b64 = base64.b64encode(new_html.encode('utf-8')).decode()
+    fields = {
+        "message": f"auto: rebuild blog index with {len(all_posts)} posts [{TODAY}]",
+        "content": content_b64,
+    }
+    if sha:
+        fields["sha"] = sha
+
+    result = gh_api("blog/index.html", "PUT", fields)
+    if "error" in result:
+        return False, result["error"]
+    return True, f"Updated blog/index.html with {len(all_posts)} posts"
 
 
 def update_posts_json(post):
@@ -383,7 +364,7 @@ def update_posts_json(post):
     data, sha = read_json_file("blog/_posts.json")
     if data is None:
         data = {"posts": [], "lastUpdated": TODAY}
-    
+
     # Dedupe by slug
     existing_slugs = {p["slug"] for p in data["posts"]}
     if post["slug"] not in existing_slugs:
@@ -470,6 +451,11 @@ def main():
     }
     result = update_posts_json(post_meta)
     print(f"{'✅' if 'error' not in result else '❌'} Updated _posts.json")
+
+    # Update blog/index.html with all posts (blog-card HTML)
+    idx_ok, idx_msg = update_blog_index()
+    print(f"{'✅' if idx_ok else '❌'} {idx_msg}")
+
     print(f"\nDone! Generated: {title.split('—')[0].strip()}")
 
 
