@@ -1,0 +1,42 @@
+{
+  "lastUpdated": "2026-04-15T18:23:58.354201",
+  "stats": {
+    "total": 2
+  },
+  "posts": [
+    {
+      "slug": "wacli",
+      "title": "Wacli",
+      "description": "WhatsApp CLI — 本地消息同步、离线搜索、发送消息，支持 Homebrew 一键安装",
+      "url": "https://wacli.sh",
+      "source": "HN Show HN",
+      "sourceIcon": "💬",
+      "tags": [
+        "CLI",
+        "Go",
+        "WhatsApp",
+        "Messaging"
+      ],
+      "icon": "💬",
+      "date": "2026-04-15",
+      "score": 100
+    },
+    {
+      "slug": "plain",
+      "title": "Plain",
+      "description": "面向人类和 AI Agent 的全栈 Python 框架，基于 Django，支持内置 Agent 工具链",
+      "url": "https://plainframework.com",
+      "source": "HN Show HN",
+      "sourceIcon": "⚡",
+      "tags": [
+        "Python",
+        "Framework",
+        "Web",
+        "Django"
+      ],
+      "icon": "⚡",
+      "date": "2026-04-15",
+      "score": 86
+    }
+  ]
+}
