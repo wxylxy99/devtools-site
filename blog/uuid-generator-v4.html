@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UUID v4 生成器 — 免费在线批量创建唯一标识符 — DevUtils</title>
+<meta name="description" content="UUID（通用唯一标识符）是软件开发中广泛使用的 128 位标识符，UUIDv4 通过随机数生成，几乎可以保证全球唯一。本文介绍 UUID 的各版本区别、生成方法和在数据库设计中的应用。">
+<meta name="keywords" content="UUID, Generator, Backend">
+<link rel="canonical" href="https://devutils.uk/blog/uuid-generator-v4">
+<meta property="og:title" content="UUID v4 生成器 — 免费在线批量创建唯一标识符 — DevUtils">
+<meta property="og:description" content="UUID（通用唯一标识符）是软件开发中广泛使用的 128 位标识符，UUIDv4 通过随机数生成，几乎可以保证全球唯一。本文介绍 UUID 的各版本区别、生成方法和在数据库设计中的应用。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://devutils.uk/blog/uuid-generator-v4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6731042234472710" crossorigin="anonymous"></script>
+<style>
+:root { --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a25;--text:#e4e4e7;--text2:#a1a1aa;--text3:#71717a;--accent:#6366f1;--border:#27272a; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; font-size:16px; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { color:#818cf8; }
+.container { max-width:800px; margin:0 auto; padding:0 24px; }
+header { background:rgba(10,10,15,0.95); border-bottom:1px solid var(--border); padding:14px 0; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+nav { display:flex; justify-content:space-between; align-items:center; }
+.logo { font-size:18px; font-weight:700; color:#fff; text-decoration:none; font-family:'JetBrains Mono',monospace; }
+.logo span { color:var(--accent); }
+.nav-links { display:flex; gap:28px; list-style:none; }
+.nav-links a { color:var(--text2); text-decoration:none; font-size:14px; font-weight:500; }
+.nav-links a:hover, .nav-links a.active { color:var(--text); }
+.nav-links a.active { color:var(--accent); }
+.breadcrumb { padding:28px 0 0; font-size:13px; color:var(--text3); }
+.breadcrumb a { color:var(--text3); }
+.breadcrumb span { margin:0 6px; }
+article { padding:32px 0 80px; }
+.article-header { margin-bottom:36px; }
+.article-header h1 { font-size:clamp(24px,5vw,36px); font-weight:700; line-height:1.25; margin-bottom:14px; color:#fff; }
+.article-meta { display:flex; gap:20px; font-size:13px; color:var(--text3); flex-wrap:wrap; align-items:center; }
+.tag { background:rgba(99,102,241,0.12); color:var(--accent); padding:3px 12px; border-radius:100px; font-size:12px; font-weight:500; }
+.difficulty { color:var(--text3); }
+.ad-container { margin:32px 0; padding:20px; background:var(--surface); border-radius:12px; text-align:center; border:1px solid var(--border); min-height:100px; display:flex; align-items:center; justify-content:center; color:var(--text3); font-size:13px; }
+.content { font-size:16px; }
+.content h2 { font-size:22px; font-weight:600; margin:36px 0 14px; color:#fff; }
+.content h3 { font-size:18px; font-weight:600; margin:24px 0 10px; color:#e4e4e7; }
+.content p { margin-bottom:18px; color:var(--text2); }
+.content ul, .content ol { margin:0 0 18px 24px; color:var(--text2); }
+.content li { margin-bottom:8px; }
+.content code { font-family:'JetBrains Mono',monospace; background:var(--surface); padding:2px 8px; border-radius:4px; font-size:14px; color:#818cf8; }
+.content pre { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; overflow-x:auto; margin:20px 0; }
+.content pre code { background:none; padding:0; color:#e4e4e7; font-size:14px; line-height:1.6; }
+.content table { width:100%; border-collapse:collapse; margin:20px 0; font-size:14px; }
+.content table th { background:var(--surface); padding:10px 14px; text-align:left; border:1px solid var(--border); color:#fff; font-weight:600; }
+.content table td { padding:10px 14px; border:1px solid var(--border); color:var(--text2); }
+.content .tip { background:rgba(99,102,241,0.08); border-left:3px solid var(--accent); padding:16px 20px; border-radius:0 8px 8px 0; margin:24px 0; }
+.content .tip strong { color:var(--accent); }
+.content .warning { background:rgba(234,179,8,0.08); border-left:3px solid #eab308; padding:16px 20px; border-radius:0 8px 8px 0; margin:24px 0; }
+.source-link { margin-top:48px; padding-top:24px; border-top:1px solid var(--border); font-size:13px; color:var(--text3); }
+footer { border-top:1px solid var(--border); padding:24px 0; text-align:center; font-size:13px; color:var(--text3); }
+@media(max-width:640px){ .container{ padding:0 16px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <nav>
+      <a href="/" class="logo">DevUtils<span>.uk</span></a>
+      <ul class="nav-links">
+        <li><a href="/">Tools</a></li>
+        <li><a href="/tutorials">Tutorials</a></li>
+        <li><a href="/blog/" class="active">Blog</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class="container">
+  <div class="breadcrumb">
+    <a href="/">DevUtils</a><span>›</span>
+    <a href="/blog/">Blog</a><span>›</span>
+    UUID v4 生成器
+  </div>
+</div>
+<article>
+  <div class="container">
+    <div class="article-header">
+      <h1>UUID v4 生成器</h1>
+      <div class="article-meta">
+        <span class="difficulty">初级</span>
+        <span>2026-04-16</span>
+        <span class="tag">UUID</span> <span class="tag">Generator</span> <span class="tag">Backend</span>
+      </div>
+    </div>
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6731042234472710" data-ad-slot="" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+    <div class="content">
+      <h2>什么是 UUID v4 生成器？</h2>
+      <p>UUID（通用唯一标识符）是软件开发中广泛使用的 128 位标识符，UUIDv4 通过随机数生成，几乎可以保证全球唯一。本文介绍 UUID 的各版本区别、生成方法和在数据库设计中的应用。</p>
+
+      <h2>为什么开发者需要这个工具？</h2>
+      <p>在日常开发中，我们经常需要处理各种数据格式转换、验证和生成任务。使用在线工具可以省去搭建本地环境的麻烦，快速得到结果，尤其适合调试和临时需求。</p>
+      <p>DevUtils 提供免费、无需注册、即开即用的在线工具，帮助开发者提升效率。</p>
+
+      <div class="tip">
+        <strong>💡 提示：</strong> 收藏本页，下次需要时直接访问，无需重复搜索。
+      </div>
+
+      <h2>使用方法</h2>
+      <p>直接访问 DevUtils 相应工具页面，输入你的数据，即可获得格式化的结果。所有工具都支持实时预览和批量处理。</p>
+
+      <h2>常见使用场景</h2>
+      <ul>
+        <li>调试 API 响应数据</li>
+        <li>快速验证数据格式是否正确</li>
+        <li>团队协作时代码格式化统一</li>
+        <li>本地开发时快速生成测试数据</li>
+      </ul>
+
+      <h2>相关工具推荐</h2>
+      <ul>
+        <li><a href="/">JSON Formatter</a> — 格式化、验证、压缩 JSON</li>
+        <li><a href="/">Base64 Encoder/Decoder</a> — Base64 编解码</li>
+        <li><a href="/">Timestamp Converter</a> — Unix 时间戳转换</li>
+      </ul>
+
+      <div class="ad-container">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6731042234472710" data-ad-slot="" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <h2>进阶技巧</h2>
+      <p>熟练使用这些工具可以大幅提升开发效率。建议关注 DevUtils 的更新，我们会持续添加新的开发者工具。</p>
+    </div>
+    <div class="source-link">
+      本文由 DevUtils 自动生成 · <a href="/blog/">查看更多文章</a>
+    </div>
+  </div>
+</article>
+<footer>
+  <div class="container">© 2025 DevUtils.uk — Free Developer Tools</div>
+</footer>
+</body>
+</html>
