@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenClaw 完全上手指南 — 从零配置你的本地 AI Agent</title>
+    <meta
+      name="description"
+      content="OpenClaw 完全上手指南：从零配置你的本地 AI Agent。涵盖 Docker 一键部署、Telegram/Discord 多渠道接入、控制面板使用及常见问题解决。"
+    />
+    <meta name="theme-color" content="#0A0E1A" />
+
+    <meta property="og:title" content="OpenClaw 完全上手指南" />
+    <meta
+      property="og:description"
+      content="从零配置你的本地 AI Agent。Docker 一键部署，多渠道接入，详细中文教程。"
+    />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-primary: #0A0E1A;
+        --bg-secondary: #111827;
+        --bg-card: #1a2035;
+        --text-primary: #f0f4ff;
+        --text-secondary: #94a3b8;
+        --accent: #6366f1;
+        --accent-light: #818cf8;
+        --accent-glow: rgba(99, 102, 241, 0.3);
+        --border: rgba(255, 255, 255, 0.08);
+        --code-bg: #0d1117;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --error: #ef4444;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.7;
+        font-size: 16px;
+      }
+
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Navigation */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(10, 14, 26, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      nav .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .nav-logo {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text-primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .nav-logo-icon {
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        margin-left: auto;
+      }
+
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: var(--text-primary);
+      }
+
+      /* Hero */
+      .hero {
+        padding: 140px 0 80px;
+        text-align: center;
+        position: relative;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(99, 102, 241, 0.12);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: var(--accent-light);
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 28px;
+      }
+
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+
+      .hero h1 {
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 1.15;
+        margin-bottom: 20px;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-gradient {
+        background: linear-gradient(135deg, var(--accent), #a78bfa, #38bdf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+        line-height: 1.8;
+      }
+
+      .toc {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px 32px;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .toc h3 {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+      }
+
+      .toc ol {
+        list-style: none;
+        counter-reset: toc;
+      }
+
+      .toc ol li {
+        counter-increment: toc;
+        margin-bottom: 10px;
+        font-size: 15px;
+      }
+
+      .toc ol li::before {
+        content: counter(toc) ".";
+        color: var(--accent);
+        font-weight: 600;
+        margin-right: 10px;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      .toc ol li a {
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .toc ol li a:hover {
+        color: var(--accent-light);
+      }
+
+      /* Section */
+      .section {
+        padding: 80px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .section:first-of-type {
+        border-top: none;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+
+      .section-header h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.01em;
+      }
+
+      .section-header p {
+        color: var(--text-secondary);
+        font-size: 16px;
+      }
+
+      /* Headings */
+      h2 { font-size: 28px; font-weight: 700; margin: 0 0 24px; }
+      h3 { font-size: 20px; font-weight: 600; margin: 0 0 16px; color: var(--text-primary); }
+      h4 { font-size: 16px; font-weight: 600; margin: 0 0 12px; color: var(--text-primary); }
+
+      p { margin-bottom: 16px; color: var(--text-secondary); }
+
+      a {
+        color: var(--accent-light);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+
+      a:hover { opacity: 0.8; }
+
+      strong { color: var(--text-primary); font-weight: 600; }
+
+      /* Code blocks */
+      .code-block {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .code-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .code-header span {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .copy-btn {
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: var(--accent-light);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .copy-btn:hover {
+        background: rgba(99, 102, 241, 0.25);
+      }
+
+      .code-block pre {
+        padding: 20px;
+        overflow-x: auto;
+      }
+
+      .code-block code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text-primary);
+      }
+
+      .code-comment { color: #6b7280; }
+
+      /* Info boxes */
+      .info-box {
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 10px;
+        padding: 18px 22px;
+        margin-bottom: 24px;
+      }
+
+      .info-box.warning {
+        background: rgba(245, 158, 11, 0.08);
+        border-color: rgba(245, 158, 11, 0.2);
+      }
+
+      .info-box.error {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.2);
+      }
+
+      .info-box.success {
+        background: rgba(34, 197, 94, 0.08);
+        border-color: rgba(34, 197, 94, 0.2);
+      }
+
+      .info-box p {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 14px;
+      }
+
+      .info-box strong { color: var(--text-primary); }
+
+      .info-box.warning p { color: var(--warning); }
+      .info-box.error p { color: var(--error); }
+      .info-box.success p { color: var(--success); }
+
+      /* Step list */
+      .steps {
+        list-style: none;
+        counter-reset: steps;
+      }
+
+      .steps li {
+        counter-increment: steps;
+        display: flex;
+        gap: 20px;
+        margin-bottom: 32px;
+        align-items: flex-start;
+      }
+
+      .steps li::before {
+        content: counter(steps);
+        min-width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        margin-top: 2px;
+      }
+
+      .step-content { flex: 1; }
+
+      .step-content h4 {
+        margin-bottom: 8px;
+        font-size: 17px;
+      }
+
+      .step-content p {
+        margin-bottom: 12px;
+        font-size: 15px;
+      }
+
+      /* Feature cards */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .feature-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+
+      .feature-card:hover {
+        border-color: rgba(99, 102, 241, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(99, 102, 241, 0.12);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        color: var(--accent-light);
+      }
+
+      .feature-card h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .feature-card p {
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      /* Table */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+
+      .data-table th {
+        text-align: left;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid var(--border);
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .data-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      .data-table code {
+        font-family: 'JetBrains Mono', monospace;
+        background: rgba(99, 102, 241, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: var(--accent-light);
+      }
+
+      /* FAQ */
+      .faq-item {
+        border-bottom: 1px solid var(--border);
+        padding: 24px 0;
+      }
+
+      .faq-item:first-child {
+        padding-top: 0;
+      }
+
+      .faq-item h4 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+      }
+
+      .faq-item p {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      /* Footer */
+      footer {
+        padding: 48px 0;
+        border-top: 1px solid var(--border);
+        text-align: center;
+      }
+
+      footer p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 640px) {
+        .hero h1 { font-size: 32px; }
+        .section-header h2 { font-size: 24px; }
+        nav .nav-links { display: none; }
+        .toc { padding: 18px 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-icon">&#x1F43E;</div>
+          OpenClaw
+        </a>
+        <div class="nav-links">
+          <a href="#intro">简介</a>
+          <a href="#prerequisites">环境准备</a>
+          <a href="#docker">Docker 部署</a>
+          <a href="#channels">多渠道接入</a>
+          <a href="#ui">控制面板</a>
+          <a href="#faq">常见问题</a>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          开源项目 &bull; MIT License &bull; v1.0+ 
+        </div>
+
+        <h1>
+          OpenClaw<br />
+          <span class="hero-gradient">完全上手指南</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          从零配置你的本地 AI Agent。涵盖 Docker 一键部署、Telegram / Discord 多渠道接入、
+          Web 控制面板使用，以及常见问题的完整解决方案。无需昂贵云服务，在你自己的服务器上跑起来。
+        </p>
+
+        <div class="toc">
+          <h3>本文目录</h3>
+          <ol>
+            <li><a href="#intro">OpenClaw 是什么？</a></li>
+            <li><a href="#prerequisites">环境准备：安装依赖</a></li>
+            <li><a href="#docker">Docker 一键部署</a></li>
+            <li><a href="#channels">Telegram / Discord 多渠道接入</a></li>
+            <li><a href="#ui">Web 控制面板详解</a></li>
+            <li><a href="#faq">常见问题与解决方案</a></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 1: Introduction -->
+    <section class="section" id="intro">
+      <div class="container">
+        <div class="section-header">
+          <h2>OpenClaw 是什么？</h2>
+          <p>一个运行在你服务器上的自主 AI Agent，支持多平台消息接入</p>
+        </div>
+
+        <p>
+          OpenClaw 是一个开源的本地 AI Agent 框架，由 Nous Research 团队开发维护。
+          与传统的聊天机器人或 IDE 插件不同，OpenClaw 是一个<strong>持久运行在你自有服务器上的自主智能体</strong>——
+          它能记忆学习、调用工具、执行自动化任务，并通过 Telegram、Discord、Slack 等多个平台与你保持联系。
+        </p>
+
+        <p>
+          OpenClaw 的核心设计理念是<strong>「成长性」</strong>：你运行它的时间越长，它对你的项目和环境就越了解，
+          能帮你处理的事情也就越多。它会自动生成并保存 Skills（技能），在 ClawHub 社区与他人共享，
+          形成一个持续进化的 AI 助手生态。
+        </p>
+
+        <h3>核心能力一览</h3>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3>多平台消息网关</h3>
+            <p>同时接入 Telegram、Discord、Slack、WhatsApp、Email，一个 Agent 对接所有渠道。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </div>
+            <h3>持久记忆与技能学习</h3>
+            <p>自动记录对话历史和执行轨迹，生成可复用的 Skills，越用越聪明。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h3>自然语言定时任务</h3>
+            <p>用日常语言描述定时任务，OpenClaw 自动转换成 cron 表达式并执行。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>沙箱隔离执行</h3>
+            <p>支持 Docker / SSH / Singularity / Modal 等多种隔离环境，保护宿主机安全。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>
+            </div>
+            <h3>子 Agent 并行执行</h3>
+            <p>派生出独立子 Agent 处理复杂任务，互不干扰，支持 Pipeline 串联。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <h3>40+ 内置工具</h3>
+            <p>网页搜索、浏览器自动化、终端命令、代码执行、图像生成、语音合成等开箱即用。</p>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top: 32px;">
+          <p><strong>💡 与 Hermes Agent 的关系：</strong> OpenClaw 是 Hermes Agent 项目在本地部署场景下的品牌名称，
+          两者共享同一套代码基础。OpenClaw 专注于 Docker 化本地部署和轻量入门体验，
+          特别适合不想手动管理 Python 环境、追求快速启动的用户。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Prerequisites -->
+    <section class="section" id="prerequisites">
+      <div class="container">
+        <div class="section-header">
+          <h2>环境准备：安装依赖</h2>
+          <p>在开始之前，需要确保你的系统满足基本要求并安装好必要软件</p>
+        </div>
+
+        <h3>系统要求</h3>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>项目</th>
+              <th>最低要求</th>
+              <th>推荐配置</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>操作系统</td>
+              <td>Ubuntu 20.04+ / macOS 12+ / WSL2</td>
+              <td>Ubuntu 22.04 LTS</td>
+            </tr>
+            <tr>
+              <td>内存</td>
+              <td>8 GB RAM</td>
+              <td>16 GB RAM 或更多</td>
+            </tr>
+            <tr>
+              <td>磁盘空间</td>
+              <td>10 GB 可用</td>
+              <td>20 GB SSD</td>
+            </tr>
+            <tr>
+              <td>网络</td>
+              <td>能访问 OpenAI/OpenRouter API</td>
+              <td>稳定的翻墙线路或国内 API 镜像</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Step 1: 安装 Docker</h3>
+
+        <p>
+          Docker 是 OpenClaw 的推荐运行方式。如果你的系统还没有 Docker，执行以下步骤：
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="curl -fsSL https://get.docker.com | sh">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 一键安装 Docker（Ubuntu/Debian）</span>
+curl -fsSL https://get.docker.com | sh
+
+<span class="code-comment"># 将当前用户加入 docker 组（避免每次 sudo）</span>
+sudo usermod -aG docker $USER
+newgrp docker
+
+<span class="code-comment"># 验证安装</span>
+docker --version
+<span class="code-comment"># 输出示例: Docker version 24.0.7, build afdd53b</span></code></pre>
+        </div>
+
+        <div class="info-box warning">
+          <p><strong>⚠️ 注意：</strong> 在 macOS 上推荐使用 <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a>，
+          安装后确保 Docker Engine 处于运行状态。Windows 用户请务必通过 WSL2 模式安装 Docker Desktop，
+          勿直接在 PowerShell 中运行容器。</p>
+        </div>
+
+        <h3>Step 2: 安装 Docker Compose</h3>
+
+        <p>
+          Docker Compose 让我们可以用一个 YAML 文件管理所有服务（Agent、Gateway、数据库等）的生命周期。
+          大部分场景下 OpenClaw 只需要 <code>docker compose</code> 命令即可。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="docker compose version">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 检查是否已内置（Docker Desktop 和新版 docker 包自带）</span>
+docker compose version
+<span class="code-comment"># 如果报错 command not found，手动安装：</span>
+<span class="code-comment"># https://docs.docker.com/compose/install/</span></code></pre>
+        </div>
+
+        <h3>Step 3: 准备 API Key</h3>
+
+        <p>
+          OpenClaw 本身不托管大模型，你需要提供一个 API 端点来调用 LLM。
+          目前支持的来源包括：
+        </p>
+
+        <ul style="margin-bottom: 24px; padding-left: 24px; color: var(--text-secondary);">
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">Nous Portal</strong>（推荐，免费额度，需注册 <a href="https://portal.nousresearch.com" target="_blank">portal.nousresearch.com</a>）</li>
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">OpenRouter</strong>（<a href="https://openrouter.ai" target="_blank">openrouter.ai</a>，支持数百个模型，按量计费）</li>
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">OpenAI API</strong>（官方 API，需要境外支付方式）</li>
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">自定义 OpenAI 兼容端点</strong>（如 Groq、LocalAI、Ollama 等）</li>
+        </ul>
+
+        <div class="info-box success">
+          <p><strong>✅ 推荐新用户：</strong> 前往 <a href="https://portal.nousresearch.com" target="_blank"> Nous Portal</a> 注册账号，
+          在仪表盘复制你的 API Key，完全免费，无需信用卡。</p>
+        </div>
+
+        <h3>Step 4: 防火墙与网络</h3>
+
+        <p>
+          OpenClaw 的控制面板默认监听 <code>3000</code> 端口，Gateway 默认监听 <code>8000</code> 端口。
+          如果你的服务器在云上，需要在云控制台的安全组中放行这些端口。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="sudo ufw allow 3000/tcp && sudo ufw allow 8000/tcp && sudo ufw reload">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># Ubuntu/Debian 使用 ufw 放行端口（如果你用 ufw）</span>
+sudo ufw allow 3000/tcp
+sudo ufw allow 8000/tcp
+sudo ufw reload</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Docker Deploy -->
+    <section class="section" id="docker">
+      <div class="container">
+        <div class="section-header">
+          <h2>Docker 一键部署</h2>
+          <p>一条命令，在任何支持 Docker 的系统上启动完整的 OpenClaw</p>
+        </div>
+
+        <h3>方式一：快速启动（推荐新手）</h3>
+
+        <p>
+          这是最快的上手方式。只需要一条命令，OpenClaw 会自动拉取镜像、创建配置文件目录、
+          启动所有容器服务。整个过程通常在 2-3 分钟内完成。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="curl -fsSL https://openclaw.ai/install.sh | docker compose -f - up">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 一键启动 OpenClaw（自动下载最新版本）</span>
+curl -fsSL https://openclaw.ai/install.sh | docker compose -f - up</code></pre>
+        </div>
+
+        <div class="info-box warning">
+          <p><strong>⚠️ 首次运行会拉取多个 Docker 镜像（约 3-5 GB），</strong>
+          请确保网络畅通。如果拉取缓慢，可以使用国内镜像加速：
+          在 <code>/etc/docker/daemon.json</code> 中加入 <code>"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]</code>，
+          然后执行 <code>sudo systemctl restart docker</code>。</p>
+        </div>
+
+        <h3>方式二：手动配置文件启动（推荐有经验用户）</h3>
+
+        <p>
+          如果你想自定义数据目录、端口、环境变量，建议手动创建 <code>docker-compose.yml</code> 文件。
+          这样更方便后续升级和数据迁移。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="mkdir -p ~/openclaw && cd ~/openclaw && curl -fsSL https://openclaw.ai/docker-compose.yml -o docker-compose.yml">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 创建项目目录并下载配置文件</span>
+mkdir -p ~/openclaw && cd ~/openclaw
+curl -fsSL https://openclaw.ai/docker-compose.yml -o docker-compose.yml</code></pre>
+        </div>
+
+        <p>然后创建 <code>.env</code> 环境变量文件：</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>~/openclaw/.env</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="cat > .env << 'EOF'
+# API 配置
+OPENCLAW_API_PROVIDER=openrouter
+OPENCLAW_API_KEY=your-api-key-here
+OPENCLAW_MODEL=anthropic/claude-3.5-sonnet
+
+# 控制面板
+OPENCLAW_UI_PORT=3000
+OPENCLAW_UI_USERNAME=admin
+OPENCLAW_UI_PASSWORD=change-me-before-running
+
+# Gateway
+OPENCLAW_GATEWAY_PORT=8000
+
+# 数据持久化
+OPENCLAW_DATA_DIR=./data
+EOF">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 创建 .env 文件</span>
+cat > .env << 'EOF'
+<span class="code-comment"># API 配置</span>
+OPENCLAW_API_PROVIDER=openrouter
+OPENCLAW_API_KEY=your-api-key-here
+OPENCLAW_MODEL=anthropic/claude-3.5-sonnet
+
+<span class="code-comment"># 控制面板</span>
+OPENCLAW_UI_PORT=3000
+OPENCLAW_UI_USERNAME=admin
+OPENCLAW_UI_PASSWORD=change-me-before-running
+
+<span class="code-comment"># Gateway</span>
+OPENCLAW_GATEWAY_PORT=8000
+
+<span class="code-comment"># 数据持久化</span>
+OPENCLAW_DATA_DIR=./data
+EOF</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p><strong>💡 模型选择建议：</strong> 如果使用 OpenRouter，<code>OPENCLAW_MODEL</code> 可以填入任意支持的模型 ID，
+          如 <code>anthropic/claude-3.5-sonnet</code>、<code>openai/gpt-4o</code>、
+          <code>google/gemini-2.0-flash-exp</code> 等。推荐从 Claude 3.5 Sonnet 开始，
+         它的工具调用能力是目前最强的。</p>
+        </div>
+
+        <h3>启动与停止</h3>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="cd ~/openclaw && docker compose up -d">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 启动所有服务（后台运行）</span>
+cd ~/openclaw && docker compose up -d
+
+<span class="code-comment"># 查看运行状态</span>
+docker compose ps
+
+<span class="code-comment"># 查看实时日志</span>
+docker compose logs -f
+
+<span class="code-comment"># 停止所有服务</span>
+docker compose down
+
+<span class="code-comment"># 完全清理（包括数据卷，慎用）</span>
+docker compose down -v</code></pre>
+        </div>
+
+        <h3>验证是否运行成功</h3>
+
+        <p>启动后等待约 30 秒，让各服务完成初始化。然后访问控制面板确认状态：</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="curl -s http://localhost:3000/api/health | python3 -m json.tool">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 检查控制面板健康状态</span>
+curl -s http://localhost:3000/api/health | python3 -m json.tool
+
+<span class="code-comment"># 预期输出示例：</span>
+<span class="code-comment"># {</span>
+<span class="code-comment">#   "status": "ok",</span>
+<span class="code-comment">#   "version": "1.2.4",</span>
+<span class="code-comment">#   "agent": "connected",</span>
+<span class="code-comment">#   "gateway": "connected"</span>
+<span class="code-comment"># }</span></code></pre>
+        </div>
+
+        <div class="info-box success">
+          <p><strong>✅ 恭喜！</strong> 如果看到 <code>"status": "ok"</code>，说明 OpenClaw 已成功运行。
+          现在打开浏览器访问 <code>http://你的服务器IP:3000</code>，输入用户名密码即可进入控制面板。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Multi-channel Setup -->
+    <section class="section" id="channels">
+      <div class="container">
+        <div class="section-header">
+          <h2>Telegram / Discord 多渠道接入</h2>
+          <p>让你的 Agent 同时在多个平台接收消息，不遗漏任何一条</p>
+        </div>
+
+        <p>
+          OpenClaw 的 Gateway（网关）服务负责对接各个消息平台。一个运行中的 OpenClaw 实例
+          可以同时连接 Telegram 和 Discord，也可以按需添加更多渠道。
+          所有渠道的消息都会汇聚到同一个 Agent，会话历史统一管理。
+        </p>
+
+        <h3>Telegram Bot 接入</h3>
+
+        <p>
+          Telegram 是接入最简单、体验最流畅的平台。需要先创建一个 Telegram Bot：
+        </p>
+
+        <ol style="margin-bottom: 24px; padding-left: 24px; color: var(--text-secondary);">
+          <li style="margin-bottom: 10px;">
+            在 Telegram 中搜索 <strong style="color: var(--text-primary);">@BotFather</strong>，发送 <code>/newbot</code>
+          </li>
+          <li style="margin-bottom: 10px;">
+            给 Bot 起名字（显示名）和用户名（以 bot 结尾，唯一）
+          </li>
+          <li style="margin-bottom: 10px;">
+            BotFather 会返回一个 <strong style="color: var(--text-primary);">HTTP API Token</strong>，格式类似 <code>123456789:ABCdefGHIjklMNOpqrSTUvwxyz</code>
+          </li>
+          <li style="margin-bottom: 10px;">
+            在 <code>.env</code> 或控制面板中填入这个 Token 即可
+          </li>
+        </ol>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>~/openclaw/.env（追加以下内容）</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="cat >> .env << 'EOF'
+# Telegram
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_ALLOWED_USERS=your-telegram-user-id
+EOF">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 在 .env 中追加 Telegram 配置</span>
+cat >> .env << 'EOF'
+
+<span class="code-comment"># Telegram</span>
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+<span class="code-comment"># TELEGRAM_ALLOWED_USERS 填入你的数字用户 ID（不是用户名），</span>
+<span class="code-comment"># 可通过 @userinfobot 获取</span>
+TELEGRAM_ALLOWED_USERS=123456789
+EOF</code></pre>
+        </div>
+
+        <div class="info-box warning">
+          <p><strong>⚠️ 重要 — 访问控制：</strong> 务必设置 <code>TELEGRAM_ALLOWED_USERS</code> 为你的数字 ID，
+          而不是留空。OpenClaw 默认不限制访问者，如果不设白名单，任何知道 Bot 用户名的人都可以与你的 Agent 对话，
+          可能产生意外费用或安全风险。</p>
+        </div>
+
+        <p>
+          获取用户 ID 的方法：在 Telegram 搜索 <code>@userinfobot</code> 并发送任意消息，它会回复你的数字 ID。
+        </p>
+
+        <h3>Discord Bot 接入</h3>
+
+        <p>
+          Discord 接入稍微复杂，需要在 Discord Developer Portal 创建一个 Application 并开启 Bot 权限：
+        </p>
+
+        <ol style="margin-bottom: 24px; padding-left: 24px; color: var(--text-secondary);">
+          <li style="margin-bottom: 10px;">
+            前往 <a href="https://discord.com/developers/applications" target="_blank">Discord Developer Portal</a>，
+            点击 <strong style="color: var(--text-primary);">New Application</strong>，起个名字
+          </li>
+          <li style="margin-bottom: 10px;">
+            在左侧菜单选择 <strong style="color: var(--text-primary);">Bot</strong>，点击 <strong style="color: var(--text-primary);">Add Bot</strong>
+          </li>
+          <li style="margin-bottom: 10px;">
+            在 <strong style="color: var(--text-primary);">Privileged Gateway Intents</strong> 中开启：
+            <code>PRESENCE INTENT</code>、<code>SERVER MEMBERS INTENT</code>、<code>MESSAGE CONTENT INTENT</code>
+          </li>
+          <li style="margin-bottom: 10px;">
+            点击 <strong style="color: var(--text-primary);">Reset Token</strong> 获取 Bot Token（只显示一次，请妥善保存）
+          </li>
+          <li style="margin-bottom: 10px;">
+            在 OAuth2 > URL Generator 中，勾选 <code>bot</code> scopes 和
+            <code>Read Message History</code>、<code>Send Messages</code> 权限，生成邀请链接
+          </li>
+          <li style="margin-bottom: 10px;">
+            打开邀请链接，将 Bot 添加到你的服务器
+          </li>
+        </ol>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>~/openclaw/.env（追加以下内容）</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="cat >> .env << 'EOF'
+# Discord
+DISCORD_BOT_TOKEN=your-discord-bot-token
+DISCORD_GUILD_ID=your-server-id
+EOF">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 在 .env 中追加 Discord 配置</span>
+cat >> .env << 'EOF'
+
+<span class="code-comment"># Discord</span>
+DISCORD_BOT_TOKEN=your-discord-bot-token
+<span class="code-comment"># DISCORD_GUILD_ID 为你的服务器（Guild）数字 ID，</span>
+<span class="code-comment"># 在 Discord 开发者模式中右键服务器 -> 复制 ID</span>
+DISCORD_GUILD_ID=123456789012345678
+EOF</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p><strong>💡 获取 Discord Guild ID：</strong> 在 Discord 设置中开启
+          <strong>开发者模式</strong>（Advanced > Developer Mode），然后右键你的服务器名，
+          选择 <strong>复制服务器 ID</strong>。</p>
+        </div>
+
+        <h3>重启服务使配置生效</h3>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" onclick="copyText(this)" data-text="cd ~/openclaw && docker compose down && docker compose up -d">Copy</button>
+          </div>
+          <pre><code><span class="code-comment"># 重启 OpenClaw 以加载新配置</span>
+cd ~/openclaw && docker compose down && docker compose up -d
+
+<span class="code-comment"># 查看 Gateway 日志确认渠道连接状态</span>
+docker compose logs -f gateway</code></pre>
+        </div>
+
+        <h3>与 Agent 对话</h3>
+
+        <p>
+          配置完成后，在 Telegram 中找到你的 Bot 并发送一条消息，Agent 应该在几秒内回复。
+          在 Discord 中，你需要在文本频道 @mention Bot 或者直接发消息（取决于配置），
+          Bot 同样会回复。OpenClaw 的上下文会自动携带之前对话的历史记录。
+        </p>
+
+        <div class="info-box success">
+          <p><strong>✅ 多渠道测试：</strong> 你可以在 Telegram 发起一段对话，然后切换到 Discord 继续。
+          对 Agent 来说，这是同一个会话，因为它在服务端维护了统一的记忆和状态。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Control UI -->
+    <section class="section" id="ui">
+      <div class="container">
+        <div class="section-header">
+          <h2>Web 控制面板详解</h2>
+          <p>通过图形界面管理你的 Agent、渠道、Skills 和定时任务</p>
+        </div>
+
+        <p>
+          打开浏览器访问 <code>http://服务器IP:3000</code>，使用 <code>.env</code> 中配置的
+          <code>OPENCLAW_UI_USERNAME</code> 和 <code>OPENCLAW_UI_PASSWORD</code> 登录。
+          首次登录后建议立即修改密码。
+        </p>
+
+        <h3>仪表盘（Dashboard）</h3>
+
+        <p>
+          登录后默认进入仪表盘，这里展示了 Agent 的整体运行状态：
+        </p>
+
+        <ul style="margin-bottom: 24px; padding-left: 24px; color: var(--text-secondary);">
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">Agent 状态</strong> — 当前是否在线、已运行时长、当前模型</li>
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">消息统计</strong> — 今日/本周/本月处理的消息数量</li>
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">活跃渠道</strong> — Telegram、Discord 等渠道的连接状态指示灯</li>
+          <li style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">最近活动</strong> — Agent 最近执行的命令、生成的 Skills、触发的定时任务</li>
+        </ul>
+
+        <h3>对话管理（Conversations）</h3>
+
+        <p>
+          这里列出了 Agent 所有历史会话。你可以选择任意一个会话继续对话，
+          也可以查看完整的对话轨迹，了解 Agent 在某个问题上做了哪些思考和工具调用。
+          对话支持导出为 JSON 或 Markdown 格式，方便存档或分享。
+        </p>
+
+        <h3>Skills 市场（Skills Hub）</h3>
+
+        <p>
+          OpenClaw 的 Skills 是可插拔的任务模块。一个 Skill 可以是一个文档处理流程、
+          一个代码审查规则、一个定时报告生成器，甚至是一个完整的自动化工作流。
+        </p>
+
+        <p>
+          <strong style="color: var(--text-primary);">内置 Skills：</strong> OpenClaw 开箱自带 40+ Skills，覆盖 GitHub PR 审查、
+          数据分析报告、新闻摘要、定时提醒等常见场景。
+        </p>
+
+        <p>
+          <strong style="color: var(--text-primary);">社区 Skills：</strong> 从 <a href="https://clawhub.ai" target="_blank">ClawHub</a> 
+          或 <a href="https://agentskills.io" target="_blank">AgentSkills.io</a> 可以直接安装社区贡献的 Skills。
+          在 Skills Hub 页面搜索关键词，点击安装即可，无需手动配置。
+        </p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Skill 安装示例</span>
+          </div>
+          <pre><code><span class="code-comment"># 也可以通过命令行安装 Skill</span>
+docker compose exec agent openclaw skills install github-pr-reviewer
+
+<span class="code-comment"># 查看已安装的 Skills</span>
+docker compose exec agent openclaw skills list
+
+<span class="code-comment"># 卸载 Skill</span>
+docker compose exec agent openclaw skills uninstall github-pr-reviewer</code></pre>
+        </div>
+
+        <h3>定时任务（Cron Jobs）</h3>
+
+        <p>
+          OpenClaw 支持用自然语言描述定时任务，Agent 会自动帮你转换成 cron 表达式并按计划执行。
+          在控制面板的 Cron Jobs 页面，你可以：
+        </p>
+
+        <ul style="margin-bottom: 24px; padding-left: 24px; color: var(--text-secondary);">
+          <li style="margin-bottom: 8px;">创建新的定时任务（如「每天早上 9 点给我发一份天气报告」）</li>
+          <li style="margin-bottom: 8px;">查看所有已创建任务的执行历史和结果</li>
+          <li style="margin-bottom: 8px;">手动触发任意定时任务（测试用）</li>
+          <li style="margin-bottom: 8px;">启用/禁用单个任务，而不必删除</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>定时任务示例</span>
+          </div>
+          <pre><code><span class="code-comment"># 通过自然语言创建定时任务</span>
+docker compose exec agent openclaw cron create "每天早上9点给我发天气报告" \
+  --time "09:00" \
+  --timezone "Asia/Shanghai" \
+  --skill weather-briefing</code></pre>
+        </div>
+
+        <h3>系统设置（Settings）</h3>
+
+        <p>
+          在 Settings 页面可以调整以下配置：
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>配置项</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>OPENCLAW_MODEL</code></td>
+              <td>当前使用的 LLM 模型，可随时切换</td>
+            </tr>
+            <tr>
+              <td><code>temperature</code></td>
+              <td>模型温度参数，0-2 之间，越高越有创造性</td>
+            </tr>
+            <tr>
+              <td><code>max_tokens</code></td>
+              <td>单次回复最大 token 数，建议 4096</td>
+            </tr>
+            <tr>
+              <td><code>system_prompt</code></td>
+              <td>系统提示词，决定 Agent 的角色定位和行为风格</td>
+            </tr>
+            <tr>
+              <td><code>allowed_tools</code></td>
+              <td>允许 Agent 调用的工具列表，安全性控制</td>
+            </tr>
+            <tr>
+              <td><code>rate_limit</code></td>
+              <td>每个用户每分钟最大消息数，防止滥用</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box">
+          <p><strong>💡 进阶技巧：</strong> 如果你想让 Agent 以特定角色运行（比如「代码审查助手」或「产品经理」），
+          修改 <code>system_prompt</code> 即可。例如：
+          <em>"你是一个资深的后端架构师，擅长审查 Go 语言代码，关注性能、安全和可维护性。"</em>
+          Agent 会自动调整它的回答风格和关注点。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: FAQ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <h2>常见问题与解决方案</h2>
+          <p>遇到问题先查这里，90% 的问题都可以通过以下方法解决</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>1. Docker 容器启动后立即退出，日志显示 "permission denied"</h4>
+          <p>
+            这通常是因为数据目录权限问题。OpenClaw 的某些服务需要写入
+            <code>./data</code> 目录，而当前用户可能不是目录所有者。
+            解决方式：<code>sudo chown -R $(id -u):$(id -g) ~/openclaw/data</code>，
+            然后重新 <code>docker compose up -d</code>。
+            如果使用了 WSL2，确保 Windows 侧的文件夹没有开启 "只读" 或 "同步" 特性。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>2. 镜像拉取超时，速度极慢</h4>
+          <p>
+            使用国内 Docker 镜像加速。在 <code>/etc/docker/daemon.json</code> 中添加：
+            <code>{"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn", "https://hub-mirror.c.163.com"]}</code>，
+            然后 <code>sudo systemctl restart docker</code>。
+            或者直接在国内云服务器（如腾讯云、阿里云北京区域）上运行，拉取速度会快很多。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>3. Telegram Bot 不响应消息</h4>
+          <p>
+            按以下顺序排查：① Bot Token 是否正确填写在 <code>.env</code> 中；②
+            重启后配置是否生效（<code>docker compose restart gateway</code>）；
+            ③ 在 Bot Father 中发送 <code>/mybots</code> 查看 Bot 状态；
+            ④ 检查 <code>docker compose logs gateway</code> 中是否有 Telegram 连接错误；
+            ⑤ 确认 <code>TELEGRAM_ALLOWED_USERS</code> 中包含你的数字 ID（不是 @用户名）。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>4. Discord Bot 显示 "Message Content Intent" 权限不足</h4>
+          <p>
+            这是最常见的 Discord 接入问题。在 Discord Developer Portal 的 Bot 页面，
+            找到 <strong>Privileged Gateway Intents</strong>，确保
+            <code>MESSAGE CONTENT INTENT</code> 已开启（滑块变绿）。
+            修改后需要点击 <strong>Save Changes</strong>，然后在 OAuth2 > URL Generator
+            重新生成邀请链接，将 Bot 重新加入服务器。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>5. API 调用报 401 或 403 错误</h4>
+          <p>
+            401 表示 API Key 错误或过期；403 表示 Key 有效但没有访问该模型的权限。
+            解决方法：登录对应的 API 提供者网站检查 Key 是否正确、
+            账户是否有余额、是否有权限访问你指定的模型。
+            如果使用 OpenRouter，可以在仪表盘查看具体模型的可用性。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>6. Agent 回复速度很慢（超过 30 秒）</h4>
+          <p>
+            可能的原因：① 模型推理本身较慢（换用更快的模型如 GPT-4o Mini 或 Gemini Flash）；
+            ② 网络延迟（你的服务器到 API 服务商的网络质量差，建议用 <code>curl -w "%{time_total}"</code> 测试）；
+            ③ OpenClaw 工具调用链过长（减少每次对话的工具调用数量）；
+            ④ Docker 容器资源不足（增加 <code>docker-compose.yml</code> 中 agent 服务的内存限制）。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>7. 如何升级到新版本？</h4>
+          <p>
+            OpenClaw 使用 Docker 镜像发布，升级非常方便：
+            <code>docker compose pull && docker compose up -d</code>。
+            这会拉取最新镜像并重启服务。由于数据持久化在 <code>./data</code> 目录，
+            升级不会丢失历史对话和 Skills。如果是大版本升级（如 v1.x 到 v2.x），
+            建议先阅读 Release Note 中的 Breaking Changes 部分。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>8. 如何查看详细日志进行调试？</h4>
+          <p>
+            使用 <code>docker compose logs -f [service_name]</code> 查看指定服务的日志。
+            主要服务包括：<code>agent</code>（主 Agent）、<code>gateway</code>（消息网关）、
+            <code>ui</code>（控制面板）。使用 <code>-f</code> 参数可以实时跟踪日志输出。
+            如果日志太多，可以用 <code>docker compose logs --tail=100 agent</code>
+            只看最近 100 行。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>9. 如何备份和迁移 OpenClaw？</h4>
+          <p>
+            OpenClaw 的所有数据都在 <code>~/openclaw/data</code> 目录中。
+            完整备份只需要：<code>tar -czvf openclaw-backup.tar.gz ~/openclaw/data</code>。
+            迁移到新服务器时，复制这个压缩包，在新服务器上安装 Docker 和 Docker Compose，
+            创建相同结构的目录，解压后执行 <code>docker compose up -d</code> 即可。
+            注意确保 <code>.env</code> 文件也被一并复制（API Key 等敏感信息不要泄露）。
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>10. 控制面板打不开，显示 502 Bad Gateway</h4>
+          <p>
+            这说明 UI 服务没有正常启动。执行 <code>docker compose ps</code> 查看各服务状态，
+            如果 UI 服务状态不是 "Up"，执行 <code>docker compose logs ui</code> 查看具体错误。
+            常见原因：端口 3000 被占用（<code>sudo lsof -i :3000</code> 查进程）、
+            内存不足导致 OOM（<code>dmesg | grep -i oom</code> 查看）。
+            解决后 <code>docker compose restart ui</code>。
+          </p>
+        </div>
+
+        <div class="info-box" style="margin-top: 32px;">
+          <p><strong>💬 还需要帮助？</strong> 欢迎在 GitHub Issues 或 
+          <a href="https://discord.gg/NousResearch" target="_blank"> Nous Research Discord</a> 
+          的 #openclaw 频道提问。提问时请附上 <code>docker compose logs</code> 的相关日志片段，
+          这样社区成员可以更快地定位问题。</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>
+          OpenClaw &mdash; 基于 Hermes Agent 构建 &middot; MIT License &middot; 
+          <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noopener">GitHub</a>
+          &middot; 2026
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function copyText(btn) {
+        var text = btn.getAttribute('data-text');
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(function() {
+          var original = btn.textContent;
+          btn.textContent = 'Copied!';
+          btn.style.background = 'rgba(34, 197, 94, 0.2)';
+          btn.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+          btn.style.color = '#22c55e';
+          setTimeout(function() {
+            btn.textContent = original;
+            btn.style.background = '';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+          }, 1500);
+        });
+      }
+    </script>
+  </body>
+</html>
