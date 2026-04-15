@@ -1,6 +1,18 @@
 {
   "posts": [
     {
+      "slug": "url-encoder-decoder",
+      "title": "URL Encoder / Decoder: Encode Decode URLs Online Free",
+      "description": "Encode and decode URLs instantly. Safely transmit special characters over the web with percent-encoding (URL encoding) explained.",
+      "date": "2026-04-15",
+      "tags": [
+        "URL Encoder / Decoder"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/url-encoder-decoder.html",
+      "tool": "URL Encoder / Decoder"
+    },
+    {
       "slug": "regex-tester",
       "title": "Regex Tester: Test Regular Expressions Online Free",
       "description": "Test and debug regular expressions in real-time. Supports JavaScript, Python, and PCRE syntax with instant match highlighting and group extraction.",
@@ -25,5 +37,5 @@
       "tool": "Color Converter"
     }
   ],
-  "lastUpdated": "2026-04-15T19:33:29.966323"
+  "lastUpdated": "2026-04-15T19:33:36.140053"
 }
