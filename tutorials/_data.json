@@ -1,11 +1,125 @@
 {
   "stats": {
-    "total": 5,
+    "total": 11,
     "sources": 4,
     "days": 3
   },
-  "lastUpdated": "2026-04-12T12:00:00Z",
+  "lastUpdated": "2026-04-15T20:21:44.197541",
   "posts": [
+    {
+      "slug": "openclaw-getting-started",
+      "url": "/tutorials/openclaw-getting-started",
+      "title": "OpenClaw 完全上手指南 — 从零配置你的本地 AI Agent",
+      "description": "完整指南：从零部署 OpenClaw，涵盖 Docker 安装、多渠道 Telegram/Discord 接入、Control UI 面板操作、常见问题排错。本地运行完全私有的 AI Agent。",
+      "date": "2026-04-15",
+      "source": "OpenClaw Official",
+      "sourceIcon": "🦀",
+      "stars": "12.8k",
+      "tags": [
+        "OpenClaw",
+        "AI Agent",
+        "Docker",
+        "Telegram",
+        "本地部署"
+      ],
+      "readTime": "18 min",
+      "icon": "🦀"
+    },
+    {
+      "slug": "openclaw-use-cases",
+      "url": "/tutorials/openclaw-use-cases",
+      "title": "OpenClaw 玩法大全 — 21+ 真实用例深度解析",
+      "description": "21+ 真实用例覆盖三大场景：开发者工作流（代码审查/日志分析/文档研究）、内容创作（视频字幕/社交媒体/博客）、商业自动化（CRM/邮件/日程）。含详细提示词模板。",
+      "date": "2026-04-15",
+      "source": "OpenClaw Community",
+      "sourceIcon": "🔥",
+      "stars": "12.8k",
+      "tags": [
+        "OpenClaw",
+        "用例",
+        "AI Agent",
+        "提示词",
+        "自动化"
+      ],
+      "readTime": "22 min",
+      "icon": "🔥"
+    },
+    {
+      "slug": "openclaw-mcp-guide",
+      "url": "/tutorials/openclaw-mcp-guide",
+      "title": "OpenClaw MCP 扩展完全指南 — 连接你的整个工具生态",
+      "description": "详解 Model Context Protocol（MCP）架构，安装配置 MCP 服务器，连接 Zapier/n8n 自动化、NotebookLM 知识库、自定义 MCP 工具开发、安全最佳实践。",
+      "date": "2026-04-15",
+      "source": "OpenClaw Docs",
+      "sourceIcon": "🔌",
+      "stars": "12.8k",
+      "tags": [
+        "OpenClaw",
+        "MCP",
+        "自动化",
+        "Zapier",
+        "API"
+      ],
+      "readTime": "20 min",
+      "icon": "🔌"
+    },
+    {
+      "slug": "hermes-advanced-usage",
+      "url": "/tutorials/hermes-advanced-usage",
+      "title": "Hermes Agent 高级玩法 — Telegram 深度集成 + Cron 自动化",
+      "description": "深度讲解 Hermes Agent 的 Telegram 话题隔离、Cron 任务调度、自定义工具开发（registry.register）、Memory 记忆系统、Skin 引擎定制、多 Provider 切换。",
+      "date": "2026-04-15",
+      "source": "Hermes Docs",
+      "sourceIcon": "🤖",
+      "stars": "—",
+      "tags": [
+        "Hermes",
+        "Agent",
+        "Telegram",
+        "Cron",
+        "自动化"
+      ],
+      "readTime": "20 min",
+      "icon": "⚡"
+    },
+    {
+      "slug": "hermes-multi-agent",
+      "url": "/tutorials/hermes-multi-agent",
+      "title": "Hermes Agent 子 Agent 协作 — 多 Agent 并行处理复杂任务",
+      "description": "详解 delegate_task 工具、三大协作模式（顺序/并行/层级）、MCP Server 即 Agent、跨平台 delegation、Cron 任务级别的 Agent 并行。含 6 个常见陷阱与解决方案。",
+      "date": "2026-04-15",
+      "source": "Hermes Docs",
+      "sourceIcon": "🤖",
+      "stars": "—",
+      "tags": [
+        "Hermes",
+        "子Agent",
+        "多Agent",
+        "并行",
+        "协作"
+      ],
+      "readTime": "18 min",
+      "icon": "🔀"
+    },
+    {
+      "slug": "hermes-skill-development",
+      "url": "/tutorials/hermes-skill-development",
+      "title": "Hermes Agent 技能开发完全指南 — Skill 系统与自动化工作流",
+      "description": "完整 Skill 开发教程：SKILL.md 结构、四大触发机制、完整 Skill 示例（devutils-monitor/daily-report）、Skill 与工具的区别、hermes skills install 机制、最佳实践。",
+      "date": "2026-04-15",
+      "source": "Hermes Docs",
+      "sourceIcon": "🤖",
+      "stars": "—",
+      "tags": [
+        "Hermes",
+        "Skill",
+        "自动化",
+        "Cron",
+        "工作流"
+      ],
+      "readTime": "22 min",
+      "icon": "🎯"
+    },
     {
       "slug": "openwebui-docker-deploy",
       "url": "/tutorials/openwebui-docker-deploy",
@@ -15,7 +129,13 @@
       "source": "OpenWebUI Docs",
       "sourceIcon": "📖",
       "stars": "28.4k",
-      "tags": ["OpenWebUI", "Docker", "Ollama", "PVE", "GPU"],
+      "tags": [
+        "OpenWebUI",
+        "Docker",
+        "Ollama",
+        "PVE",
+        "GPU"
+      ],
       "readTime": "15 min",
       "icon": "🐳"
     },
@@ -28,7 +148,12 @@
       "source": "GitHub Trending",
       "sourceIcon": "⭐",
       "stars": "12.3k",
-      "tags": ["Ollama", "GPU", "WSL2", "Docker"],
+      "tags": [
+        "Ollama",
+        "GPU",
+        "WSL2",
+        "Docker"
+      ],
       "readTime": "12 min",
       "icon": "🖥️"
     },
@@ -41,7 +166,12 @@
       "source": "Hermes Docs",
       "sourceIcon": "🤖",
       "stars": "—",
-      "tags": ["Hermes", "Agent", "Telegram", "Cron"],
+      "tags": [
+        "Hermes",
+        "Agent",
+        "Telegram",
+        "Cron"
+      ],
       "readTime": "20 min",
       "icon": "⚡"
     },
@@ -54,7 +184,12 @@
       "source": "GitHub Trending",
       "sourceIcon": "⭐",
       "stars": "18.7k",
-      "tags": ["OpenHands", "AI Agent", "Docker", "部署"],
+      "tags": [
+        "OpenHands",
+        "AI Agent",
+        "Docker",
+        "部署"
+      ],
       "readTime": "18 min",
       "icon": "🚀"
     },
@@ -67,7 +202,13 @@
       "source": "Hacker News",
       "sourceIcon": "📰",
       "stars": "—",
-      "tags": ["API", "Caddy", "Nginx", "代理", "SSL"],
+      "tags": [
+        "API",
+        "Caddy",
+        "Nginx",
+        "代理",
+        "SSL"
+      ],
       "readTime": "10 min",
       "icon": "🌐"
     }
