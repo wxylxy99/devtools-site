@@ -378,6 +378,28 @@ footer {{ border-top:1px solid var(--border); padding:24px 0; text-align:center;
     return html
 
 
+def update_posts_json(post):
+    """Add a new post to blog/_posts.json"""
+    data, sha = read_json_file("blog/_posts.json")
+    if data is None:
+        data = {"posts": [], "lastUpdated": TODAY}
+    
+    # Dedupe by slug
+    existing_slugs = {p["slug"] for p in data["posts"]}
+    if post["slug"] not in existing_slugs:
+        data["posts"].insert(0, post)
+        data["lastUpdated"] = TODAY
+        content_b64 = base64.b64encode(json.dumps(data, ensure_ascii=False, indent=2).encode()).decode()
+        fields = {
+            "message": f"auto: add {post['slug']} to blog posts [{TODAY}]",
+            "content": content_b64,
+        }
+        if sha:
+            fields["sha"] = sha
+        return gh_api("blog/_posts.json", "PUT", fields)
+    return {"skipped": True}
+
+
 def main():
     # Load already-generated tracker
     tracker, tracker_sha = read_json_file("scripts/_generated_posts.json")
@@ -435,43 +457,19 @@ def main():
         f"auto: update generated posts tracker [{TODAY}]"
     )
 
-    # Update blog/index.html with new post list
-    # Load existing blog posts
-    existing_posts = []
-    # Try reading from blog/index.html via gh_api
-    blog_index_data = gh_api("blog/index.html")
-    if blog_index_data and blog_index_data.get("content"):
-        raw = blog_index_data["content"]
-        decoded = base64.b64decode(raw + "==").decode("utf-8")
-        # Posts are in the HTML — rebuild from tracker
-        # Get all generated post metadata
-        pass
-
-    # Build post list from tracker (chronological, newest first)
-    # Need to fetch title info — for now, use slug as title proxy
-    new_post = {
+    # Update _posts.json (not index.html)
+    post_meta = {
         "slug": slug,
-        "url": f"/blog/{slug}.html",
         "title": title.split("—")[0].strip(),
-        "description": description[:100] + "...",
+        "description": description[:120],
         "date": TODAY,
         "tags": tags,
-        "difficulty": difficulty,
+        "readTime": "5 min",
+        "url": f"/blog/{slug}.html",
+        "tool": title.split("—")[0].strip(),
     }
-
-    # Try to get existing posts from blog/index.html
-    all_posts = [new_post]
-    blog_html = update_blog_index(all_posts)
-    content_b64 = base64.b64encode(blog_html.encode("utf-8")).decode()
-    fields = {
-        "message": f"auto: update blog index with {slug} [{TODAY}]",
-        "content": content_b64,
-    }
-    if blog_index_data and blog_index_data.get("sha"):
-        fields["sha"] = blog_index_data["sha"]
-
-    result = gh_api("blog/index.html", "PUT", fields)
-    print(f"{'✅' if 'error' not in result else '❌'} Updated blog/index.html")
+    result = update_posts_json(post_meta)
+    print(f"{'✅' if 'error' not in result else '❌'} Updated _posts.json")
     print(f"\nDone! Generated: {title.split('—')[0].strip()}")
 
 
