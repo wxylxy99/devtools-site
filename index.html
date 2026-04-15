@@ -312,8 +312,8 @@ html.light .icon-moon { display: none; }
   gap: 12px;
   margin-top: 8px;
 }
-.bento-tools .tool-card:nth-child(4) { grid-column: span 2; }
-.bento-tools .tool-card:nth-child(5) { grid-column: span 2; }
+.bento-tools .tool-card:nth-child(7) { grid-column: span 2; }
+.bento-tools .tool-card:nth-child(8) { grid-column: span 1; }
 .bento-tools .tool-card:nth-child(6) { grid-column: span 1; }
 
 /* Tool Card — Bento style */
@@ -681,7 +681,9 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
   .bento-tools { grid-template-columns: repeat(2, 1fr); }
   .bento-tools .tool-card:nth-child(4),
   .bento-tools .tool-card:nth-child(5),
-  .bento-tools .tool-card:nth-child(6) { grid-column: span 1; }
+  .bento-tools .tool-card:nth-child(6),
+  .bento-tools .tool-card:nth-child(7),
+  .bento-tools .tool-card:nth-child(8) { grid-column: span 1; }
   .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 }
 
@@ -699,7 +701,8 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
 }
 
 @media (max-width: 420px) {
-  .bento-tools .tool-card:nth-child(4) { grid-column: span 1; }
+  .bento-tools .tool-card:nth-child(4),
+  .bento-tools .tool-card:nth-child(7) { grid-column: span 1; }
 }
 
 /* ========== RESPONSIVE / MOBILE ========== */
@@ -717,7 +720,9 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
   }
   .bento-tools .tool-card:nth-child(4),
   .bento-tools .tool-card:nth-child(5),
-  .bento-tools .tool-card:nth-child(6) {
+  .bento-tools .tool-card:nth-child(6),
+  .bento-tools .tool-card:nth-child(7),
+  .bento-tools .tool-card:nth-child(8) {
     grid-column: span 1 !important;
   }
   .hero { padding: 28px 0 20px; }
@@ -904,7 +909,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
     </div>
 
     <!-- Tool Cards - Bento Grid -->
-    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count">6 tools</span></p>
+    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count">8 tools</span></p>
     <div class="bento-tools" id="toolCards">
 
       <div class="tool-card" onclick="openTool('json')" data-tool="json">
@@ -960,6 +965,28 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <p data-i18n="t_url_desc">Encode and decode URLs for safe transmission over the web.</p>
         <span class="tool-card-tag" data-i18n="t_url_tag">Web</span>
       </div>
+
+      <a class="tool-card" href="https://wacli.sh" target="_blank" rel="noopener" data-tool="wacli" style="display:block;text-decoration:none;">
+        <div class="tool-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3>&#128172; Wacli</h3>
+        <p>WhatsApp CLI — sync messages, search offline, and send directly from terminal.</p>
+        <span class="tool-card-tag">External</span>
+      </a>
+
+      <a class="tool-card" href="https://plainframework.com" target="_blank" rel="noopener" data-tool="plain" style="display:block;text-decoration:none;">
+        <div class="tool-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <h3>&#9889; Plain</h3>
+        <p>Full-stack Python framework built for humans and AI agents. PostgreSQL + htmx + Tailwind.</p>
+        <span class="tool-card-tag">External</span>
+      </a>
 
     </div>
 
