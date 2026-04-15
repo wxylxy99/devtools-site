@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester: Test Regular Expressions Online Free</title>
+    <meta name="description" content="Test and debug regular expressions in real-time. Supports JavaScript, Python, and PCRE syntax with instant match highlighting and group extraction.">
+    <meta name="keywords" content="regex tester, regular expression tester, online regex, regex debugger, regex match">
+    <link rel="canonical" href="https://devutils.uk/blog/regex-tester">
+    <meta property="og:title" content="Regex Tester: Test Regular Expressions Online Free">
+    <meta property="og:description" content="Test and debug regular expressions in real-time. Supports JavaScript, Python, and PCRE syntax with instant match highlighting and group extraction.">
+    <meta property="og:type" content="article">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --border: #27272a;
+            --code-bg: #16161d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--accent-hover); text-decoration: underline; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .logo span { color: var(--accent); }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+        nav a { color: var(--text-secondary); font-size: 0.95rem; }
+        nav a:hover { color: var(--text-primary); text-decoration: none; }
+        .breadcrumb {
+            padding: 16px 0;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+        .breadcrumb a { color: var(--text-secondary); }
+        main { padding-bottom: 60px; }
+        article h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.3;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .article-meta span { display: flex; align-items: center; gap: 6px; }
+        .article-content { font-size: 1.05rem; }
+        article h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        article h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        article p { margin-bottom: 20px; color: var(--text-secondary); }
+        article ul, article ol { margin-bottom: 20px; padding-left: 24px; color: var(--text-secondary); }
+        article li { margin-bottom: 8px; }
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        code {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.875em;
+            color: #79c0ff;
+        }
+        pre code { background: none; padding: 0; color: #e6edf3; }
+        .tool-callout {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        .tool-callout h4 { margin-bottom: 8px; color: var(--accent); }
+        .tool-callout p { margin-bottom: 0; font-size: 0.95rem; }
+        .tool-callout a { font-weight: 600; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--text-primary); font-weight: 600; background: var(--bg-secondary); }
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        @media (max-width: 640px) {
+            article h1 { font-size: 1.6rem; }
+            article h2 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="/" class="logo">Dev<span>Utils</span></a>
+            <nav>
+                <ul>
+                    <li><a href="/">Tools</a></li>
+                    <li><a href="/blog/">Blog</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">DevUtils</a> <span>&rsaquo;</span>
+            <a href="/blog/">Blog</a> <span>&rsaquo;</span>
+            Regex Tester
+        </div>
+
+        <main>
+            <article>
+                <h1>Regex Tester: Test Regular Expressions Online Free</h1>
+                <div class="article-meta">
+                    <span>&#128197; 2026-04-15</span>
+                    <span>&#128214; Regex Tester</span>
+                    <span>&#128337; 5 min read</span>
+                </div>
+
+                <div class="article-content">
+
+<p>Regular expressions (regex) are one of the most powerful tools in a developer's toolkit — but they're also notoriously difficult to write and debug without immediate feedback. A good regex tester with real-time validation can cut hours of frustration down to minutes.</p>
+
+<h2>What is Regex Testing?</h2>
+<p>Regex testing validates whether your regular expression pattern matches the intended text. It shows exactly which characters match, which capture groups are extracted, and flags syntax errors in your pattern before you deploy it to production.</p>
+
+<div class="tool-callout">
+    <h4>&#9889; Try the Regex Tester</h4>
+    <p>Test your regular expressions in real-time with our <a href="/#regex">free Regex Tester tool</a>. Supports match highlighting, group extraction, and common pattern library.</p>
+</div>
+
+<h2>Regex Syntax Quick Reference</h2>
+<table>
+    <tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><code>.</code></td><td>Any character</td><td><code>a.c</code> matches "abc"</td></tr>
+    <tr><td><code>^</code></td><td>Start of string</td><td><code>^hello</code> matches "hello world"</td></tr>
+    <tr><td><code>$</code></td><td>End of string</td><td><code>world$</code> matches "hello world"</td></tr>
+    <tr><td><code>*</code></td><td>0 or more</td><td><code>ab*c</code> matches "ac", "abc"</td></tr>
+    <tr><td><code>+</code></td><td>1 or more</td><td><code>ab+c</code> matches "abc" not "ac"</td></tr>
+    <tr><td><code>?</code></td><td>0 or 1</td><td><code>colou?r</code> matches "color", "colour"</td></tr>
+    <tr><td><code>[abc]</code></td><td>Character class</td><td><code>[aeiou]</code> matches vowels</td></tr>
+    <tr><td><code>[a-z]</code></td><td>Range</td><td><code>[0-9]</code> matches digits</td></tr>
+    <tr><td><code>\d</code></td><td>Digit</td><td><code>\d{{3}}</code> matches "123"</td></tr>
+    <tr><td><code>\w</code></td><td>Word character</td><td><code>\w+</code> matches words</td></tr>
+    <tr><td><code>()</code></td><td>Capture group</td><td><code>(\d+)px</code> captures digits</td></tr>
+    <tr><td><code>|</code></td><td>Alternation</td><td><code>cat|dog</code> matches either</td></tr>
+</table>
+
+<h2>Common Regex Patterns</h2>
+
+<h3>Email Validation</h3>
+<pre><code>^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{{2,}}$</code></pre>
+
+<h3>URL Matching</h3>
+<pre><code>https?:\/\/[\w\-]+(\.[\w\-]+)+[\/#?]?.*$</code></pre>
+
+<h3>Phone Number (US)</h3>
+<pre><code>\(?\d{{3}}\)?[-.\s]?\d{{3}}[-.\s]?\d{{4}}</code></pre>
+
+<h3>IPv4 Address</h3>
+<pre><code>^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){{3}}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$</code></pre>
+
+<h2>Regex Best Practices</h2>
+<ul>
+    <li><strong>Start simple</strong> — build patterns incrementally and test at each step</li>
+    <li><strong>Use capture groups wisely</strong> — only capture what you need; non-capturing groups <code>(?:...)</code> are faster</li>
+    <li><strong>Avoid greedy quantifiers when possible</strong> — use <code>.*?</code> instead of <code>.*</code> for non-greedy matching</li>
+    <li><strong>Test edge cases</strong> — empty strings, very long strings, special characters</li>
+    <li><strong>Comment your patterns</strong> — use <code>(?#comment)</code> or break complex patterns into named groups</li>
+</ul>
+
+<div class="tool-callout">
+    <h4>&#9889; Regex Tester Tool</h4>
+    <p>Debug and test your regex patterns in real-time. <a href="/#regex">Try it free &rarr;</a></p>
+</div>
+
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 DevUtils &mdash; <a href="/">Free Developer Tools</a></p>
+        </div>
+    </footer>
+</body>
+</html>
