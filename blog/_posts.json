@@ -1,6 +1,20 @@
 {
-  "lastUpdated": "2026-04-15",
+  "lastUpdated": "2026-04-16",
   "posts": [
+    {
+      "slug": "uuid-generator-v4",
+      "title": "UUID v4 生成器",
+      "description": "UUID（通用唯一标识符）是软件开发中广泛使用的 128 位标识符，UUIDv4 通过随机数生成，几乎可以保证全球唯一。本文介绍 UUID 的各版本区别、生成方法和在数据库设计中的应用。",
+      "date": "2026-04-16",
+      "tags": [
+        "UUID",
+        "Generator",
+        "Backend"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/uuid-generator-v4.html",
+      "tool": "UUID v4 生成器"
+    },
     {
       "slug": "jwt-token-decoder",
       "title": "JWT Token Decoder: Decode and Validate JWT Tokens Online",
