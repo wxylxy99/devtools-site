@@ -1,6 +1,18 @@
 {
   "posts": [
     {
+      "slug": "regex-tester",
+      "title": "Regex Tester: Test Regular Expressions Online Free",
+      "description": "Test and debug regular expressions in real-time. Supports JavaScript, Python, and PCRE syntax with instant match highlighting and group extraction.",
+      "date": "2026-04-15",
+      "tags": [
+        "Regex Tester"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/regex-tester.html",
+      "tool": "Regex Tester"
+    },
+    {
       "slug": "color-converter",
       "title": "Color Converter: HEX, RGB, HSL Online Free Tool",
       "description": "Convert colors between HEX, RGB, HSL, and CMYK formats instantly. Free online color converter with live preview and copy-to-clipboard.",
@@ -13,5 +25,5 @@
       "tool": "Color Converter"
     }
   ],
-  "lastUpdated": "2026-04-15T19:33:23.361963"
+  "lastUpdated": "2026-04-15T19:33:29.966323"
 }
