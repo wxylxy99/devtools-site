@@ -1,6 +1,19 @@
 {
   "posts": [
     {
+      "slug": "jwt-token-decoder",
+      "title": "JWT Token Decoder: Decode and Validate JWT Tokens Online",
+      "description": "JWT (JSON Web Token) is the most common authentication scheme in modern web development. Learn how JWT works, its structure, and how to debug it online.",
+      "date": "2026-04-15",
+      "tags": [
+        "JWT",
+        "Auth"
+      ],
+      "readTime": "6 min",
+      "url": "/blog/jwt-token-decoder.html",
+      "tool": "JWT Token Decoder"
+    },
+    {
       "slug": "url-encoder-decoder",
       "title": "URL Encoder / Decoder: Encode Decode URLs Online Free",
       "description": "Encode and decode URLs instantly. Safely transmit special characters over the web with percent-encoding (URL encoding) explained.",
@@ -37,5 +50,5 @@
       "tool": "Color Converter"
     }
   ],
-  "lastUpdated": "2026-04-15T19:33:36.140053"
+  "lastUpdated": "2026-04-15T19:37:38.262728"
 }
