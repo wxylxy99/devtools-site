@@ -76,7 +76,7 @@ header{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bott
 .tutorials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
 
 /* Card */
-.card{background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:16px;padding:24px;transition:all .2s;cursor:pointer;display:block;text-decoration:none}
+.card{background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:16px;padding:24px;transition:all .2s;cursor:pointer;display:flex;flex-direction:column;height:100%;text-decoration:none}
 .card:hover{border-color:var(--border-standard);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.15);text-decoration:none}
 .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .card-source{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
@@ -86,7 +86,7 @@ header{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bott
 .card p{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap}
 .tag{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:500;background:var(--tag-bg);color:var(--accent)}
-.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border-subtle)}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border-subtle);margin-top:auto}
 .card-author{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
 .card-stars{font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
 .card-arrow{color:var(--text-muted);font-size:18px;transition:transform .15s}
