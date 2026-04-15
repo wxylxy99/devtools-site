@@ -1,0 +1,17 @@
+{
+  "posts": [
+    {
+      "slug": "color-converter",
+      "title": "Color Converter: HEX, RGB, HSL Online Free Tool",
+      "description": "Convert colors between HEX, RGB, HSL, and CMYK formats instantly. Free online color converter with live preview and copy-to-clipboard.",
+      "date": "2026-04-15",
+      "tags": [
+        "Color Converter"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/color-converter.html",
+      "tool": "Color Converter"
+    }
+  ],
+  "lastUpdated": "2026-04-15T19:33:23.361963"
+}
