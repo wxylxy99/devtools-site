@@ -909,7 +909,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
     </div>
 
     <!-- Tool Cards - Bento Grid -->
-    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count">8 tools</span></p>
+    <p class="section-label"><span data-i18n="section_all_tools">All Tools</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;" data-i18n="tool_count">13 tools</span></p>
     <div class="bento-tools" id="toolCards">
 
       <div class="tool-card" onclick="openTool('json')" data-tool="json">
@@ -966,7 +966,53 @@ textarea::placeholder, input[type="text"]::placeholder { color: var(--text-muted
         <span class="tool-card-tag" data-i18n="t_url_tag">Web</span>
       </div>
 
-      <a class="tool-card" href="https://wacli.sh" target="_blank" rel="noopener" data-tool="wacli" style="display:block;text-decoration:none;">
+      
+      <div class="tool-card" onclick="openTool('jwt')" data-tool="jwt">
+        <div class="tool-card-icon">
+          <svg><use href="#icon-key"/></svg>
+        </div>
+        <h3>JWT Token Decoder</h3>
+        <p>Decode JSON Web Tokens to inspect header, payload and signature.</p>
+        <span class="tool-card-tag">Security</span>
+      </div>
+
+      <div class="tool-card" onclick="openTool('markdown')" data-tool="markdown">
+        <div class="tool-card-icon">
+          <svg><use href="#icon-md"/></svg>
+        </div>
+        <h3>Markdown Live Preview</h3>
+        <p>Write Markdown with real-time HTML preview. Support for tables, code blocks and more.</p>
+        <span class="tool-card-tag">Writing</span>
+      </div>
+
+      <div class="tool-card" onclick="openTool('uuid')" data-tool="uuid">
+        <div class="tool-card-icon">
+          <svg><use href="#icon-uuid"/></svg>
+        </div>
+        <h3>UUID Generator</h3>
+        <p>Generate universally unique identifiers. Support UUID v4, v1, and batch generation.</p>
+        <span class="tool-card-tag">Generator</span>
+      </div>
+
+      <div class="tool-card" onclick="openTool('css')" data-tool="css">
+        <div class="tool-card-icon">
+          <svg><use href="#icon-css"/></svg>
+        </div>
+        <h3>CSS Beautifier & Minifier</h3>
+        <p>Format messy CSS with proper indentation or compress for production.</p>
+        <span class="tool-card-tag">Formatter</span>
+      </div>
+
+      <div class="tool-card" onclick="openTool('sql')" data-tool="sql">
+        <div class="tool-card-icon">
+          <svg><use href="#icon-sql"/></svg>
+        </div>
+        <h3>SQL Formatter</h3>
+        <p>Format SQL queries with proper indentation. Support MySQL, PostgreSQL, SQLite.</p>
+        <span class="tool-card-tag">Database</span>
+      </div>
+
+<a class="tool-card" href="https://wacli.sh" target="_blank" rel="noopener" data-tool="wacli" style="display:block;text-decoration:none;">
         <div class="tool-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -1451,6 +1497,304 @@ function filterTools() {
 }
 
 // ========== Navigation ==========
+
+    <!-- JWT Decoder -->
+    <div class="workspace" id="tool-jwt">
+      <div class="workspace-header">
+        <h2><svg><use href="#icon-key"/></svg><span>JWT Token Decoder</span></h2>
+        <button class="btn-back" onclick="showHome()"><svg><use href="#icon-back"/></svg>Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Input</label>
+          <textarea id="jwtInput" placeholder="Paste your JWT token here (eyJ...)"></textarea>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label>Header</label>
+          <textarea id="jwtHeader" readonly placeholder="Decoded header..."></textarea>
+          <label>Payload</label>
+          <textarea id="jwtPayload" readonly placeholder="Decoded payload..."></textarea>
+          <label>Signature</label>
+          <textarea id="jwtSig" readonly placeholder="Signature (base64)..." style="height:60px;"></textarea>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="jwtDecode()">Decode</button>
+        <button class="btn" onclick="jwtClear()">Clear</button>
+      </div>
+      <div class="status-bar" id="jwtStatus"><span>Ready</span></div>
+    </div>
+
+    <!-- Markdown Preview -->
+    <div class="workspace" id="tool-markdown">
+      <div class="workspace-header">
+        <h2><svg><use href="#icon-md"/></svg><span>Markdown Live Preview</span></h2>
+        <button class="btn-back" onclick="showHome()"><svg><use href="#icon-back"/></svg>Back</button>
+      </div>
+      <div class="tool-row" style="gap:16px;">
+        <div style="flex:1;">
+          <label>Markdown Input</label>
+          <textarea id="mdInput" placeholder="# Hello World&#10;&#10;Write your **Markdown** here..." style="height:400px;"></textarea>
+        </div>
+        <div style="flex:1;">
+          <label>Preview</label>
+          <div id="mdPreview" style="height:400px;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow-y:auto;font-size:14px;line-height:1.6;"></div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="mdConvert()">Preview</button>
+        <button class="btn" onclick="mdCopyHtml()">Copy HTML</button>
+        <button class="btn" onclick="mdClear()">Clear</button>
+      </div>
+      <div class="status-bar" id="mdStatus"><span>Ready</span></div>
+    </div>
+
+    <!-- UUID Generator -->
+    <div class="workspace" id="tool-uuid">
+      <div class="workspace-header">
+        <h2><svg><use href="#icon-uuid"/></svg><span>UUID Generator</span></h2>
+        <button class="btn-back" onclick="showHome()"><svg><use href="#icon-back"/></svg>Back</button>
+      </div>
+      <div style="padding:16px 0;">
+        <label>Generated UUIDs</label>
+        <textarea id="uuidOutput" readonly placeholder="Click Generate to create UUIDs..." style="height:200px;"></textarea>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px;">
+          <label style="font-size:13px;color:var(--text-secondary);">Count:</label>
+          <input type="number" id="uuidCount" value="5" min="1" max="100" style="width:80px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:14px;">
+          <label style="font-size:13px;color:var(--text-secondary);">Version:</label>
+          <select id="uuidVersion" style="padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:14px;">
+            <option value="4">v4 (Random)</option>
+            <option value="1">v1 (Timestamp)</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="uuidGenerate()">Generate</button>
+        <button class="btn" onclick="uuidCopy()">Copy All</button>
+        <button class="btn" onclick="uuidClear()">Clear</button>
+      </div>
+      <div class="status-bar" id="uuidStatus"><span>Ready</span></div>
+    </div>
+
+    <!-- CSS Beautifier -->
+    <div class="workspace" id="tool-css">
+      <div class="workspace-header">
+        <h2><svg><use href="#icon-css"/></svg><span>CSS Beautifier & Minifier</span></h2>
+        <button class="btn-back" onclick="showHome()"><svg><use href="#icon-back"/></svg>Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Input CSS</label>
+          <textarea id="cssInput" placeholder="Paste your CSS here..."></textarea>
+        </div>
+        <div>
+          <label>Output</label>
+          <textarea id="cssOutput" readonly placeholder="Formatted output..."></textarea>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="cssBeautify()">Beautify</button>
+        <button class="btn" onclick="cssMinify()">Minify</button>
+        <button class="btn" onclick="cssClear()">Clear</button>
+      </div>
+      <div class="status-bar" id="cssStatus"><span>Ready</span></div>
+    </div>
+
+    <!-- SQL Formatter -->
+    <div class="workspace" id="tool-sql">
+      <div class="workspace-header">
+        <h2><svg><use href="#icon-sql"/></svg><span>SQL Formatter</span></h2>
+        <button class="btn-back" onclick="showHome()"><svg><use href="#icon-back"/></svg>Back</button>
+      </div>
+      <div class="tool-row">
+        <div>
+          <label>Input SQL</label>
+          <textarea id="sqlInput" placeholder="SELECT * FROM users WHERE id = 1;"></textarea>
+        </div>
+        <div>
+          <label>Formatted SQL</label>
+          <textarea id="sqlOutput" readonly placeholder="Formatted query..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
+        <label style="font-size:13px;color:var(--text-secondary);">Indent:</label>
+        <select id="sqlIndent" style="padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:14px;">
+          <option value="2">2 spaces</option>
+          <option value="4" selected>4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="sqlFormat()">Format</button>
+        <button class="btn" onclick="sqlMinify()">Minify</button>
+        <button class="btn" onclick="sqlClear()">Clear</button>
+      </div>
+      <div class="status-bar" id="sqlStatus"><span>Ready</span></div>
+    </div>
+
+
+// ========== JWT Decoder ==========
+function jwtDecode() {
+  var token = document.getElementById('jwtInput').value.trim();
+  if (!token) { document.getElementById('jwtStatus').innerHTML = '<span>❌ Please enter a JWT token</span>'; return; }
+  var parts = token.split('.');
+  if (parts.length !== 3) { document.getElementById('jwtStatus').innerHTML = '<span>❌ Invalid JWT: expected 3 parts separated by dots</span>'; return; }
+  try {
+    function b64decode(s) { s = s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return atob(s); }
+    var header = JSON.parse(b64decode(parts[0]));
+    var payload = JSON.parse(b64decode(parts[1]));
+    document.getElementById('jwtHeader').value = JSON.stringify(header, null, 2);
+    document.getElementById('jwtPayload').value = JSON.stringify(payload, null, 2);
+    document.getElementById('jwtSig').value = parts[2];
+    var exp = payload.exp ? new Date(payload.exp * 1000).toLocaleString() : 'N/A';
+    var iat = payload.iat ? new Date(payload.iat * 1000).toLocaleString() : 'N/A';
+    var expired = payload.exp ? (Date.now() / 1000 > payload.exp ? '⚠️ EXPIRED' : '✅ Valid') : 'N/A';
+    document.getElementById('jwtStatus').innerHTML = '<span>Algorithm: ' + (header.alg||'N/A') + ' · Type: ' + (header.typ||'N/A') + ' · Expires: ' + exp + ' · ' + expired + '</span>';
+  } catch(e) { document.getElementById('jwtStatus').innerHTML = '<span>❌ Decode error: ' + e.message + '</span>'; }
+}
+function jwtClear() { document.getElementById('jwtInput').value=''; document.getElementById('jwtHeader').value=''; document.getElementById('jwtPayload').value=''; document.getElementById('jwtSig').value=''; document.getElementById('jwtStatus').innerHTML='<span>Ready</span>'; }
+
+// ========== Markdown Preview ==========
+function mdConvert() {
+  var input = document.getElementById('mdInput').value;
+  if (!input.trim()) return;
+  // Simple Markdown to HTML converter (no dependencies)
+  var html = input
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/~~(.*?)~~/g, '<del>$1</del>')
+    .replace(/`([^`]+)`/g, '<code style="background:var(--surface-1);padding:2px 6px;border-radius:3px;">$1</code>')
+    .replace(/```([\s\S]*?)```/g, '<pre style="background:var(--surface-1);padding:12px;border-radius:6px;overflow-x:auto;"><code>$1</code></pre>')
+    .replace(/^\* (.*$)/gim, '<li>$1</li>')
+    .replace(/^- (.*$)/gim, '<li>$1</li>')
+    .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+  html = '<p>' + html + '</p>';
+  // Table support
+  html = html.replace(/\|([^\n]+)\|/g, function(match) {
+    var cells = match.split('|').filter(Boolean).map(c => '<td style="border:1px solid var(--border);padding:6px 12px;">' + c.trim() + '</td>').join('');
+    return '<tr>' + cells + '</tr>';
+  });
+  html = html.replace(/(<tr>.*?<\/tr>)/g, function(match) {
+    return '<table style="border-collapse:collapse;width:100%;margin:8px 0;">' + match + '</table>';
+  });
+  document.getElementById('mdPreview').innerHTML = html;
+  document.getElementById('mdStatus').innerHTML = '<span>✅ Rendered</span>';
+}
+function mdCopyHtml() {
+  var html = document.getElementById('mdPreview').innerHTML;
+  navigator.clipboard.writeText(html).then(() => { document.getElementById('mdStatus').innerHTML = '<span>📋 HTML copied to clipboard</span>'; });
+}
+function mdClear() { document.getElementById('mdInput').value=''; document.getElementById('mdPreview').innerHTML=''; document.getElementById('mdStatus').innerHTML='<span>Ready</span>'; }
+
+// ========== UUID Generator ==========
+function uuidV4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c=='x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+}
+function uuidV1() {
+  var now = Date.now(), ts = ((now + 12219292800000) * 10000).toString(16);
+  var hex = ts.padStart(16, '0');
+  var random = (Math.random()*0x1000|0).toString(16).padStart(4,'0');
+  return hex.slice(0,8) + '-' + hex.slice(8,12) + '-1' + hex.slice(12,15) + '-' + ((8+Math.random()*4|0).toString(16)) + random.slice(0,3) + '-' + random + (Math.random()*0x100000|0).toString(16).padStart(8,'0');
+}
+function uuidGenerate() {
+  var count = Math.min(parseInt(document.getElementById('uuidCount').value)||5, 100);
+  var ver = document.getElementById('uuidVersion').value;
+  var fn = ver === '1' ? uuidV1 : uuidV4;
+  var uuids = [];
+  for (var i = 0; i < count; i++) uuids.push(fn());
+  document.getElementById('uuidOutput').value = uuids.join('\n');
+  document.getElementById('uuidStatus').innerHTML = '<span>✅ Generated ' + count + ' UUID(s) v' + ver + '</span>';
+}
+function uuidCopy() {
+  var val = document.getElementById('uuidOutput').value;
+  navigator.clipboard.writeText(val).then(() => { document.getElementById('uuidStatus').innerHTML = '<span>📋 Copied to clipboard</span>'; });
+}
+function uuidClear() { document.getElementById('uuidOutput').value=''; document.getElementById('uuidStatus').innerHTML='<span>Ready</span>'; }
+
+// ========== CSS Beautifier ==========
+function cssBeautify() {
+  var input = document.getElementById('cssInput').value;
+  if (!input.trim()) return;
+  // Simple CSS beautifier
+  var output = input
+    .replace(/\s*{\s*/g, ' {\n  ')
+    .replace(/\s*}\s*/g, '\n}\n\n')
+    .replace(/\s*;\s*/g, ';\n  ')
+    .replace(/\n\s*\n/g, '\n')
+    .trim();
+  // Auto-indent nested rules
+  var lines = output.split('\n'), indent = 0, result = [];
+  lines.forEach(function(line) {
+    var t = line.trim();
+    if (t.endsWith('}')) indent = Math.max(0, indent - 1);
+    result.push('  '.repeat(indent) + t);
+    if (t.endsWith('{')) indent++;
+  });
+  document.getElementById('cssOutput').value = result.join('\n').trim();
+  var savings = Math.round((1 - result.join('\n').length / input.length) * 100);
+  if (savings < 0) savings = Math.abs(savings);
+  document.getElementById('cssStatus').innerHTML = '<span>✅ Formatted (' + savings + '% larger)</span>';
+}
+function cssMinify() {
+  var input = document.getElementById('cssInput').value;
+  if (!input.trim()) return;
+  var output = input
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*{\s*/g, '{')
+    .replace(/\s*}\s*/g, '}')
+    .replace(/\s*:\s*/g, ':')
+    .replace(/\s*;\s*/g, ';')
+    .replace(/;}/g, '}')
+    .trim();
+  document.getElementById('cssOutput').value = output;
+  var savings = Math.round((1 - output.length / input.length) * 100);
+  document.getElementById('cssStatus').innerHTML = '<span>✅ Minified (' + savings + '% smaller, ' + output.length + ' bytes)</span>';
+}
+function cssClear() { document.getElementById('cssInput').value=''; document.getElementById('cssOutput').value=''; document.getElementById('cssStatus').innerHTML='<span>Ready</span>'; }
+
+// ========== SQL Formatter ==========
+function sqlFormat() {
+  var input = document.getElementById('sqlInput').value;
+  if (!input.trim()) return;
+  var indentOpt = document.getElementById('sqlIndent').value;
+  var indent = indentOpt === 'tab' ? '\t' : ' '.repeat(parseInt(indentOpt));
+  // Simple SQL formatter
+  var keywords = ['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','CROSS JOIN','ON','AND','OR','GROUP BY','ORDER BY','HAVING','UNION','INSERT','UPDATE','DELETE','CREATE','DROP','ALTER','TABLE','INDEX','VALUES','SET','INTO','DISTINCT','TOP','LIMIT','OFFSET','AS','CASE','WHEN','THEN','ELSE','END','IS','NULL','NOT','IN','EXISTS','BETWEEN','LIKE','ASC','DESC','CAST','COUNT','SUM','AVG','MIN','MAX','COALESCE','CONCAT','SUBSTRING','UPPER','LOWER','TRIM'];
+  var output = input.replace(/\s+/g, ' ').trim();
+  keywords.forEach(function(kw) {
+    var re = new RegExp('\\b' + kw + '\\b', 'gi');
+    output = output.replace(re, '\n' + kw);
+  });
+  output = output.replace(/,/g, ',\n  ' + indent);
+  output = output.replace(/^\n+/, '').trim();
+  // Normalize indentation
+  var lines = output.split('\n'), result = [], level = 0;
+  lines.forEach(function(line) {
+    var t = line.trim();
+    if (/^\)/.test(t)) level = Math.max(0, level - 1);
+    result.push(indent.repeat(level) + t);
+    if (/\($/.test(t)) level++;
+  });
+  document.getElementById('sqlOutput').value = result.join('\n');
+  document.getElementById('sqlStatus').innerHTML = '<span>✅ Formatted</span>';
+}
+function sqlMinify() {
+  var input = document.getElementById('sqlInput').value;
+  var output = input.replace(/\s+/g, ' ').replace(/\s*,\s*/g, ', ').replace(/\s*\(/g, '(').replace(/\s*\)/g, ')').trim();
+  document.getElementById('sqlOutput').value = output;
+  document.getElementById('sqlStatus').innerHTML = '<span>✅ Minified</span>';
+}
+function sqlClear() { document.getElementById('sqlInput').value=''; document.getElementById('sqlOutput').value=''; document.getElementById('sqlStatus').innerHTML='<span>Ready</span>'; }
+
 function showHome() {
   document.getElementById('hero').style.display = '';
   document.getElementById('toolCards').style.display = '';
