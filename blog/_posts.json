@@ -1,6 +1,20 @@
 {
-  "lastUpdated": "2026-04-16",
+  "lastUpdated": "2026-04-17",
   "posts": [
+    {
+      "slug": "cron-expression-validator",
+      "title": "Cron Expression 校验器",
+      "description": "Cron 表达式是 Linux/Unix 系统中定时任务的配置语法。本文详细介绍标准 5 段式 Cron 的格式、常用示例以及各平台的差异，帮助运维和后端开发者正确配置定时任务。",
+      "date": "2026-04-17",
+      "tags": [
+        "Cron",
+        "DevOps",
+        "Linux"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/cron-expression-validator.html",
+      "tool": "Cron Expression 校验器"
+    },
     {
       "slug": "uuid-generator-v4",
       "title": "UUID v4 生成器",
