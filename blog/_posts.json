@@ -1,6 +1,20 @@
 {
-  "lastUpdated": "2026-04-18",
+  "lastUpdated": "2026-04-19",
   "posts": [
+    {
+      "slug": "yaml-validator-formatter",
+      "title": "YAML 格式校验器",
+      "description": "YAML（YAML Ain't Markup Language）是一种人类可读的数据序列化格式，广泛用于 Docker Compose、Kubernetes 和 CI/CD 配置文件。本文介绍 YAML 的基本语法、常见错误和在线校验工具使",
+      "date": "2026-04-19",
+      "tags": [
+        "YAML",
+        "DevOps",
+        "Config"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/yaml-validator-formatter.html",
+      "tool": "YAML 格式校验器"
+    },
     {
       "slug": "rsa-key-generator",
       "title": "RSA 密钥对生成器",
