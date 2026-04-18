@@ -3,7 +3,8 @@
     "jwt-token-decoder",
     "uuid-generator-v4",
     "cron-expression-validator",
-    "rsa-key-generator"
+    "rsa-key-generator",
+    "yaml-validator-formatter"
   ],
-  "last_updated": "2026-04-18"
+  "last_updated": "2026-04-19"
 }
