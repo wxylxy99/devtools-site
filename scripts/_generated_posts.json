@@ -4,7 +4,8 @@
     "uuid-generator-v4",
     "cron-expression-validator",
     "rsa-key-generator",
-    "yaml-validator-formatter"
+    "yaml-validator-formatter",
+    "sql-formatter-online"
   ],
-  "last_updated": "2026-04-19"
+  "last_updated": "2026-04-20"
 }
