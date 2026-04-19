@@ -1,6 +1,20 @@
 {
-  "lastUpdated": "2026-04-19",
+  "lastUpdated": "2026-04-20",
   "posts": [
+    {
+      "slug": "sql-formatter-online",
+      "title": "SQL 在线格式化工具",
+      "description": "SQL 格式化对于团队协作和代码审查至关重要。本文介绍 SQL 美化的原则、常用格式化规则以及在线工具的使用方法，帮助写出整洁易读的 SQL 代码。",
+      "date": "2026-04-20",
+      "tags": [
+        "SQL",
+        "Database",
+        "Formatter"
+      ],
+      "readTime": "5 min",
+      "url": "/blog/sql-formatter-online.html",
+      "tool": "SQL 在线格式化工具"
+    },
     {
       "slug": "yaml-validator-formatter",
       "title": "YAML 格式校验器",
